@@ -5,6 +5,16 @@
  */
 package views;
 
+import DB.ConexionBD;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author alejandro
@@ -19,6 +29,48 @@ public class HacerPedido extends javax.swing.JFrame {
         this.setTitle("Hacer un nuevo pedido");
         this.setLocationRelativeTo(null);
         this.setResizable(false);
+        //String busqueda = txtBusqueda.getText();
+        buscarProducto("");
+        tablaProductosRegistrados.setEditingRow(ERROR);
+    }
+    
+    
+    
+    public void buscarProducto(String valor)
+    {
+        //Creamos la instancia 'con' de tipo ConexionBD
+        ConexionBD cc = new ConexionBD();
+        Connection cn = cc.conectar();
+
+        DefaultTableModel model;
+        
+        //Encabezados de la tabla.
+        String [] titulos = {"Producto", "Familia"};
+        String [] productos = new String[10];
+        
+        //Creamos nuestra sentencia SQL.
+        String sql = "SELECT Nombre, Descripcion FROM Material WHERE Nombre LIKE '%"+valor+"%' ";
+        
+        //Creamos el objeto para la tabla que muestra los datos de la base de datos.
+        model = new DefaultTableModel(null, titulos);
+        
+        Statement st;
+        try{
+            st = cn.createStatement();
+            ResultSet rs = st.executeQuery(sql);
+            
+            while(rs.next())
+            {
+                productos[0] = rs.getString("Nombre");
+                productos[1] = rs.getString("Descripcion");
+                model.addRow(productos);
+            }
+            tablaProductosRegistrados.setModel(model);
+            
+        } catch (SQLException ex) {
+            //Logger.getLogger(HacerPedido.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, ex);
+        }
     }
 
     /**
@@ -31,14 +83,16 @@ public class HacerPedido extends javax.swing.JFrame {
     private void initComponents() {
 
         Panel_general = new javax.swing.JPanel();
-        Panel_busqueda2 = new javax.swing.JPanel();
+        Panel_busqueda = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
-        Busqueda_producto3 = new javax.swing.JPanel();
-        jTextField4 = new javax.swing.JTextField();
+        Busqueda_producto = new javax.swing.JPanel();
+        txtBusqueda = new javax.swing.JTextField();
         Panel_listado = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
-        Panel_JTable = new javax.swing.JPanel();
-        Panel_JTable1 = new javax.swing.JPanel();
+        Panel_pedido = new javax.swing.JPanel();
+        Panel_productos = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tablaProductosRegistrados = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
@@ -50,46 +104,57 @@ public class HacerPedido extends javax.swing.JFrame {
 
         Panel_general.setBackground(new java.awt.Color(255, 255, 255));
 
-        Panel_busqueda2.setBackground(new java.awt.Color(191, 54, 12));
+        Panel_busqueda.setBackground(new java.awt.Color(191, 54, 12));
 
         jLabel8.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
         jLabel8.setForeground(new java.awt.Color(255, 255, 255));
         jLabel8.setText("Búsqueda de un producto existente");
 
-        javax.swing.GroupLayout Panel_busqueda2Layout = new javax.swing.GroupLayout(Panel_busqueda2);
-        Panel_busqueda2.setLayout(Panel_busqueda2Layout);
-        Panel_busqueda2Layout.setHorizontalGroup(
-            Panel_busqueda2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(Panel_busqueda2Layout.createSequentialGroup()
+        javax.swing.GroupLayout Panel_busquedaLayout = new javax.swing.GroupLayout(Panel_busqueda);
+        Panel_busqueda.setLayout(Panel_busquedaLayout);
+        Panel_busquedaLayout.setHorizontalGroup(
+            Panel_busquedaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(Panel_busquedaLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel8)
-                .addContainerGap(353, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        Panel_busqueda2Layout.setVerticalGroup(
-            Panel_busqueda2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, Panel_busqueda2Layout.createSequentialGroup()
+        Panel_busquedaLayout.setVerticalGroup(
+            Panel_busquedaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, Panel_busquedaLayout.createSequentialGroup()
                 .addContainerGap(8, Short.MAX_VALUE)
                 .addComponent(jLabel8)
                 .addContainerGap())
         );
 
-        Busqueda_producto3.setBackground(new java.awt.Color(255, 255, 255));
-        Busqueda_producto3.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(191, 54, 12), 2, true), "Ingrese producto a buscar", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Lucida Grande", 0, 13), new java.awt.Color(191, 54, 12))); // NOI18N
+        Busqueda_producto.setBackground(new java.awt.Color(255, 255, 255));
+        Busqueda_producto.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(191, 54, 12), 2, true), "Ingrese producto a buscar", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Lucida Grande", 0, 13), new java.awt.Color(191, 54, 12))); // NOI18N
 
-        javax.swing.GroupLayout Busqueda_producto3Layout = new javax.swing.GroupLayout(Busqueda_producto3);
-        Busqueda_producto3.setLayout(Busqueda_producto3Layout);
-        Busqueda_producto3Layout.setHorizontalGroup(
-            Busqueda_producto3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(Busqueda_producto3Layout.createSequentialGroup()
+        txtBusqueda.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtBusquedaActionPerformed(evt);
+            }
+        });
+        txtBusqueda.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtBusquedaKeyReleased(evt);
+            }
+        });
+
+        javax.swing.GroupLayout Busqueda_productoLayout = new javax.swing.GroupLayout(Busqueda_producto);
+        Busqueda_producto.setLayout(Busqueda_productoLayout);
+        Busqueda_productoLayout.setHorizontalGroup(
+            Busqueda_productoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(Busqueda_productoLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtBusqueda, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        Busqueda_producto3Layout.setVerticalGroup(
-            Busqueda_producto3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, Busqueda_producto3Layout.createSequentialGroup()
+        Busqueda_productoLayout.setVerticalGroup(
+            Busqueda_productoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, Busqueda_productoLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtBusqueda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -116,32 +181,55 @@ public class HacerPedido extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        Panel_JTable.setBackground(new java.awt.Color(255, 255, 255));
-        Panel_JTable.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(191, 54, 12), 2, true), "Pedido de productos", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Lucida Grande", 0, 13), new java.awt.Color(191, 54, 12))); // NOI18N
+        Panel_pedido.setBackground(new java.awt.Color(255, 255, 255));
+        Panel_pedido.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(191, 54, 12), 2, true), "Pedido de productos", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Lucida Grande", 0, 13), new java.awt.Color(191, 54, 12))); // NOI18N
 
-        javax.swing.GroupLayout Panel_JTableLayout = new javax.swing.GroupLayout(Panel_JTable);
-        Panel_JTable.setLayout(Panel_JTableLayout);
-        Panel_JTableLayout.setHorizontalGroup(
-            Panel_JTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout Panel_pedidoLayout = new javax.swing.GroupLayout(Panel_pedido);
+        Panel_pedido.setLayout(Panel_pedidoLayout);
+        Panel_pedidoLayout.setHorizontalGroup(
+            Panel_pedidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 273, Short.MAX_VALUE)
         );
-        Panel_JTableLayout.setVerticalGroup(
-            Panel_JTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        Panel_pedidoLayout.setVerticalGroup(
+            Panel_pedidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 0, Short.MAX_VALUE)
         );
 
-        Panel_JTable1.setBackground(new java.awt.Color(255, 255, 255));
-        Panel_JTable1.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(191, 54, 12), 2, true), "Productos registrados", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Lucida Grande", 0, 13), new java.awt.Color(191, 54, 12))); // NOI18N
+        Panel_productos.setBackground(new java.awt.Color(255, 255, 255));
+        Panel_productos.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(191, 54, 12), 2, true), "Productos registrados", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Lucida Grande", 0, 13), new java.awt.Color(191, 54, 12))); // NOI18N
 
-        javax.swing.GroupLayout Panel_JTable1Layout = new javax.swing.GroupLayout(Panel_JTable1);
-        Panel_JTable1.setLayout(Panel_JTable1Layout);
-        Panel_JTable1Layout.setHorizontalGroup(
-            Panel_JTable1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 273, Short.MAX_VALUE)
+        tablaProductosRegistrados.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {},
+                {},
+                {},
+                {}
+            },
+            new String [] {
+
+            }
+        ));
+        jScrollPane1.setViewportView(tablaProductosRegistrados);
+
+        javax.swing.GroupLayout Panel_productosLayout = new javax.swing.GroupLayout(Panel_productos);
+        Panel_productos.setLayout(Panel_productosLayout);
+        Panel_productosLayout.setHorizontalGroup(
+            Panel_productosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 454, Short.MAX_VALUE)
+            .addGroup(Panel_productosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(Panel_productosLayout.createSequentialGroup()
+                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
         );
-        Panel_JTable1Layout.setVerticalGroup(
-            Panel_JTable1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 296, Short.MAX_VALUE)
+        Panel_productosLayout.setVerticalGroup(
+            Panel_productosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 420, Short.MAX_VALUE)
+            .addGroup(Panel_productosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(Panel_productosLayout.createSequentialGroup()
+                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
         );
 
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/home/home (2).png"))); // NOI18N
@@ -159,17 +247,17 @@ public class HacerPedido extends javax.swing.JFrame {
         Panel_general.setLayout(Panel_generalLayout);
         Panel_generalLayout.setHorizontalGroup(
             Panel_generalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(Panel_busqueda2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(Panel_busqueda, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(Panel_generalLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(Panel_generalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(Busqueda_producto3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(Busqueda_producto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(Panel_generalLayout.createSequentialGroup()
                         .addGroup(Panel_generalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(Panel_JTable1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(Panel_productos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jButton1))
                         .addGap(18, 18, 18)
-                        .addComponent(Panel_JTable, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(Panel_pedido, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
             .addComponent(Panel_listado, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -177,15 +265,15 @@ public class HacerPedido extends javax.swing.JFrame {
         Panel_generalLayout.setVerticalGroup(
             Panel_generalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(Panel_generalLayout.createSequentialGroup()
-                .addComponent(Panel_busqueda2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(Panel_busqueda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(Busqueda_producto3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(Busqueda_producto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(Panel_listado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(Panel_generalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(Panel_JTable1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(Panel_JTable, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(Panel_productos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(Panel_pedido, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jButton1)
                 .addContainerGap())
@@ -216,6 +304,15 @@ public class HacerPedido extends javax.swing.JFrame {
         new Principal().setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void txtBusquedaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBusquedaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtBusquedaActionPerformed
+
+    private void txtBusquedaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBusquedaKeyReleased
+        // TODO add your handling code here:
+        buscarProducto(txtBusqueda.getText().toString());
+    }//GEN-LAST:event_txtBusquedaKeyReleased
 
     /**
      * @param args the command line arguments
@@ -254,30 +351,16 @@ public class HacerPedido extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel Busqueda_producto;
-    private javax.swing.JPanel Busqueda_producto1;
-    private javax.swing.JPanel Busqueda_producto2;
-    private javax.swing.JPanel Busqueda_producto3;
-    private javax.swing.JPanel Panel_JTable;
-    private javax.swing.JPanel Panel_JTable1;
     private javax.swing.JPanel Panel_busqueda;
-    private javax.swing.JPanel Panel_busqueda1;
-    private javax.swing.JPanel Panel_busqueda2;
     private javax.swing.JPanel Panel_general;
     private javax.swing.JPanel Panel_listado;
-    private javax.swing.JPanel Panel_listado1;
+    private javax.swing.JPanel Panel_pedido;
+    private javax.swing.JPanel Panel_productos;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
-    private javax.swing.JPanel jPanel8;
-    private javax.swing.JPanel jPanel9;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable tablaProductosRegistrados;
+    private javax.swing.JTextField txtBusqueda;
     // End of variables declaration//GEN-END:variables
 }

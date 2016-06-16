@@ -5,7 +5,14 @@
  */
 package views;
 
+import DB.ConexionBD;
 import java.awt.Color;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -21,7 +28,37 @@ public class AgregarProducto extends javax.swing.JFrame {
         this.setTitle("Agregar nuevo producto");
         this.setLocationRelativeTo(null);
         this.setResizable(false);
+        txtProducto.grabFocus();
         optFam1.setSelected(true);
+    }
+    
+    
+    
+    public void insertarProducto()
+    {
+        //Creamos la instancia 'con' de tipo ConexionBD
+        ConexionBD cc = new ConexionBD();
+        Connection cn = cc.conectar();
+        
+        String familia = "";
+        if(optFam1.isSelected())
+            familia = "Familia 1";
+        else if(optFam2.isSelected())
+            familia = "Familia 2";
+        
+        String sql = "INSERT INTO Material (Nombre, Descripcion) VALUES (?,?)";
+        try {
+            PreparedStatement pst = cn.prepareStatement(sql);
+            pst.setString(1, txtProducto.getText());
+            pst.setString(2, familia);
+            pst.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Se ha insertado el producto con éxito.",
+            "Inserción correcta", JOptionPane.INFORMATION_MESSAGE);
+            txtProducto.setText("");
+            txtProducto.grabFocus();
+        } catch (SQLException ex) {
+            Logger.getLogger(AgregarProducto.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -37,7 +74,7 @@ public class AgregarProducto extends javax.swing.JFrame {
         Panel_general = new javax.swing.JPanel();
         Ingreso_datos = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
+        txtProducto = new javax.swing.JTextField();
         jPanel5 = new javax.swing.JPanel();
         jRadioButton1 = new javax.swing.JRadioButton();
         jRadioButton2 = new javax.swing.JRadioButton();
@@ -67,7 +104,7 @@ public class AgregarProducto extends javax.swing.JFrame {
         jLabel1.setText("Nombre producto:");
 
         jPanel5.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(191, 54, 12), 2, true), "Selecciona la famila", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Lucida Grande", 0, 13), new java.awt.Color(191, 54, 12))); // NOI18N
+        jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(191, 54, 12), 2, true), "Seleccione la famila", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Lucida Grande", 0, 13), new java.awt.Color(191, 54, 12))); // NOI18N
 
         buttonGroupFamilias.add(jRadioButton1);
         jRadioButton1.setText("Familia 5");
@@ -146,6 +183,11 @@ public class AgregarProducto extends javax.swing.JFrame {
         );
 
         btnAgregarProducto.setText("Agregar");
+        btnAgregarProducto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAgregarProductoActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout Ingreso_datosLayout = new javax.swing.GroupLayout(Ingreso_datos);
         Ingreso_datos.setLayout(Ingreso_datosLayout);
@@ -153,12 +195,11 @@ public class AgregarProducto extends javax.swing.JFrame {
             Ingreso_datosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(Ingreso_datosLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(Ingreso_datosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(Ingreso_datosLayout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(18, 18, 18)
-                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(btnAgregarProducto))
+                .addGroup(Ingreso_datosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(Ingreso_datosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(btnAgregarProducto)
+                        .addComponent(txtProducto, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel1))
                 .addGap(18, 18, 18)
                 .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
@@ -166,14 +207,14 @@ public class AgregarProducto extends javax.swing.JFrame {
         Ingreso_datosLayout.setVerticalGroup(
             Ingreso_datosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(Ingreso_datosLayout.createSequentialGroup()
-                .addGroup(Ingreso_datosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(Ingreso_datosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, Ingreso_datosLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(Ingreso_datosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel1))
-                        .addGap(18, 18, 18)
+                    .addGroup(Ingreso_datosLayout.createSequentialGroup()
+                        .addGap(12, 12, 12)
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtProducto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnAgregarProducto)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -281,6 +322,16 @@ public class AgregarProducto extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void btnAgregarProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarProductoActionPerformed
+        // TODO add your handling code here:
+        if(!txtProducto.getText().equals(""))
+            insertarProducto();
+            //System.out.println("Se inserta el producto");
+        else
+            JOptionPane.showMessageDialog(null, "No se puede insertar un producto vacío.",
+            "Ha ocurrido un error", JOptionPane.WARNING_MESSAGE);
+    }//GEN-LAST:event_btnAgregarProductoActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -331,8 +382,8 @@ public class AgregarProducto extends javax.swing.JFrame {
     private javax.swing.JRadioButton jRadioButton2;
     private javax.swing.JRadioButton jRadioButton3;
     private javax.swing.JRadioButton jRadioButton6;
-    private javax.swing.JTextField jTextField2;
     private javax.swing.JRadioButton optFam1;
     private javax.swing.JRadioButton optFam2;
+    private javax.swing.JTextField txtProducto;
     // End of variables declaration//GEN-END:variables
 }

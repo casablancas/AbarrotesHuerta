@@ -50,7 +50,7 @@ public Connection conectar(){
 //    setConexion(DriverManager.getConnection(BaseDeDatos));
 
     if (conn!=null){
-    System.out.println("Conexión a base de datos listo...");
+    System.out.println("Conexión correcta a la base de datos.");
     }
     else if (conn==null)
     {
@@ -68,6 +68,6 @@ public Connection conectar(){
 }
 public void desconectar(){
     conn = null;
-    System.out.println("Desconexion a base de datos listo...");
+    System.out.println("Desconexion correcta de la base de datos.");
 }
 }
