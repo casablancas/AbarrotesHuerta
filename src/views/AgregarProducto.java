@@ -46,7 +46,7 @@ public class AgregarProducto extends javax.swing.JFrame {
         else if(optFam2.isSelected())
             familia = "Familia 2";
         
-        String sql = "INSERT INTO Material (Nombre, Descripcion) VALUES (?,?)";
+        String sql = "INSERT INTO producto (nombre, familia) VALUES (?,?)";
         try {
             PreparedStatement pst = cn.prepareStatement(sql);
             pst.setString(1, txtProducto.getText());
@@ -54,6 +54,7 @@ public class AgregarProducto extends javax.swing.JFrame {
             pst.executeUpdate();
             JOptionPane.showMessageDialog(null, "Se ha insertado el producto con éxito.",
             "Inserción correcta", JOptionPane.INFORMATION_MESSAGE);
+            optFam1.setSelected(true);
             txtProducto.setText("");
             txtProducto.grabFocus();
         } catch (SQLException ex) {
