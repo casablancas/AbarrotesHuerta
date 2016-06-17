@@ -9,7 +9,9 @@ import DB.ConexionBD;
 import java.awt.Color;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -32,14 +34,13 @@ public class AgregarProducto extends javax.swing.JFrame {
         optFam1.setSelected(true);
     }
     
-    
-    
-    public void insertarProducto()
-    {
-        //Creamos la instancia 'con' de tipo ConexionBD
+    //Creamos la instancia 'con' de tipo ConexionBD
         ConexionBD cc = new ConexionBD();
         Connection cn = cc.conectar();
-        
+    
+    
+    public void agregarProducto()
+    {
         String familia = "";
         if(optFam1.isSelected())
             familia = "Familia 1";
@@ -47,6 +48,7 @@ public class AgregarProducto extends javax.swing.JFrame {
             familia = "Familia 2";
         
         String sql = "INSERT INTO producto (nombre, familia) VALUES (?,?)";
+        //String sql = "INSERT INTO producto SELECT nombre FROM producto GROUP BY nombre";
         try {
             PreparedStatement pst = cn.prepareStatement(sql);
             pst.setString(1, txtProducto.getText());
@@ -58,7 +60,37 @@ public class AgregarProducto extends javax.swing.JFrame {
             txtProducto.setText("");
             txtProducto.grabFocus();
         } catch (SQLException ex) {
-            Logger.getLogger(AgregarProducto.class.getName()).log(Level.SEVERE, null, ex);
+//            JOptionPane.showMessageDialog(null, "No se ha podido insertar el producto porque ya existe.",
+//            "Producto ya existente", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(AgregarProducto.this, "Ya existe un producto con este nombre.", "Error al intentar agregar.", JOptionPane.ERROR_MESSAGE);
+            System.err.println(ex);
+            txtProducto.setText("");
+            txtProducto.grabFocus();
+            //Logger.getLogger(AgregarProducto.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void productoDuplicado(String nombre)
+    {
+        String sql = "SELECT nombre from pedido WHERE nombre = '"+nombre+"'";
+        
+        try {
+            Statement st = cn.createStatement();
+            ResultSet rs = st.executeQuery(sql);
+            
+            if(rs.next())
+            {
+//                JOptionPane.showMessageDialog(null, "Bienvenido.");
+//                Principal ventanaPrincipal = new Principal();
+//                ventanaPrincipal.setVisible(true);
+                JOptionPane.showMessageDialog(AgregarProducto.this, "Ya existe un producto con este nombre.", "Error al intentar agregar.", JOptionPane.ERROR_MESSAGE);
+            
+            }else
+            {
+                agregarProducto();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(HacerPedido.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -325,8 +357,10 @@ public class AgregarProducto extends javax.swing.JFrame {
 
     private void btnAgregarProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarProductoActionPerformed
         // TODO add your handling code here:
-        if(!txtProducto.getText().equals(""))
-            insertarProducto();
+        String producto = txtProducto.getText();
+        if(!producto.equals(""))
+            //agregarProducto();
+            productoDuplicado(producto);
             //System.out.println("Se inserta el producto");
         else
             JOptionPane.showMessageDialog(null, "No se puede insertar un producto vacío.",

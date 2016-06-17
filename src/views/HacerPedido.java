@@ -44,14 +44,14 @@ public class HacerPedido extends javax.swing.JFrame {
         });
     }
     
+    //Creamos la instancia 'con' de tipo ConexionBD
+        ConexionBD cc = new ConexionBD();
+        Connection cn = cc.conectar();
+    
     
     //Realiza consulta de los productos.
     public void mostrarProductos(String valor)
     {
-        //Creamos la instancia 'con' de tipo ConexionBD
-        ConexionBD cc = new ConexionBD();
-        Connection cn = cc.conectar();
-
         DefaultTableModel model;
         
         //Encabezados de la tabla.
@@ -84,6 +84,7 @@ public class HacerPedido extends javax.swing.JFrame {
                 //System.err.println("No se ha encontrado nada");
                 JOptionPane.showMessageDialog(null, "No hay ningún producto con ese nombre en la base de datos.",
                 "No se encontró el elemento", JOptionPane.INFORMATION_MESSAGE);
+                txtBusqueda.setText("");
                 txtBusqueda.grabFocus();
             }
             
@@ -104,10 +105,6 @@ public class HacerPedido extends javax.swing.JFrame {
     //Realiza consulta de los pedidos.
     public void mostrarPedidos()
     {
-        //Creamos la instancia 'con' de tipo ConexionBD
-        ConexionBD cc = new ConexionBD();
-        Connection cn = cc.conectar();
-
         DefaultTableModel model;
         
         //Encabezados de la tabla.
@@ -160,15 +157,11 @@ public class HacerPedido extends javax.swing.JFrame {
     
     public void agregarPedido()
     {
-        //Creamos la instancia 'con' de tipo ConexionBD
-        ConexionBD cc = new ConexionBD();
-        Connection cn = cc.conectar();
-        
         int fila = tablaProductosRegistrados.getSelectedRow();
         String producto = tablaProductosRegistrados.getValueAt(fila, 0).toString();
         String familia = tablaProductosRegistrados.getValueAt(fila, 1).toString();
         
-        String cant = JOptionPane.showInputDialog("Especifique Edificio y Salón con horario de la clase:", "ING-");
+        String cant = JOptionPane.showInputDialog("Especifique la cantidad de productos a pedir:", "");
         int cantidad = Integer.parseInt(cant);
         
         String sql = "INSERT INTO pedido (nombre, familia, cantidad) VALUES (?,?,?)";
@@ -178,25 +171,48 @@ public class HacerPedido extends javax.swing.JFrame {
             pst.setString(2, familia);
             pst.setInt(3, cantidad);
             pst.executeUpdate();
-            JOptionPane.showMessageDialog(null, "Se ha insertado el pedido a la cola con éxito.",
-            "Inserción correcta", JOptionPane.INFORMATION_MESSAGE);
+//            JOptionPane.showMessageDialog(null, "Se ha insertado el pedido a la cola con éxito.",
+//            "Inserción correcta", JOptionPane.INFORMATION_MESSAGE);
         } catch (SQLException ex) {
-            Logger.getLogger(AgregarProducto.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.getLogger(AgregarProducto.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(HacerPedido.this, "Ya existe este producto en la lista de pedidos.", "Error al intentar agregar al pedido.", JOptionPane.ERROR_MESSAGE);
+            
         }
     }
     
     public void eliminarColaPedidos()
     {
-        //Creamos la instancia 'con' de tipo ConexionBD
-        ConexionBD cc = new ConexionBD();
-        Connection cn = cc.conectar();
-        
         String sql = "DELETE FROM pedido";
         try {
             
             PreparedStatement pst = (PreparedStatement) cn.prepareStatement(sql);
             pst.executeUpdate();
             
+        } catch (SQLException ex) {
+            //Logger.getLogger(HacerPedido.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, ex);
+        }
+    }
+    
+    public void pedidoDuplicado(String nombre)
+    {
+        String sql = "SELECT nombre from pedido WHERE nombre = '"+nombre+"'";
+        
+        try {
+            Statement st = cn.createStatement();
+            ResultSet rs = st.executeQuery(sql);
+            
+            if(rs.next())
+            {
+//                JOptionPane.showMessageDialog(null, "Bienvenido.");
+//                Principal ventanaPrincipal = new Principal();
+//                ventanaPrincipal.setVisible(true);
+                JOptionPane.showMessageDialog(HacerPedido.this, "Ya existe un producto con este nombre.", "Error al intentar agregar.", JOptionPane.ERROR_MESSAGE);
+            
+            }else
+            {
+                agregarPedido();
+            }
         } catch (SQLException ex) {
             Logger.getLogger(HacerPedido.class.getName()).log(Level.SEVERE, null, ex);
         }
