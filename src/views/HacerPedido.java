@@ -39,9 +39,26 @@ public class HacerPedido extends javax.swing.JFrame {
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent evt) {
-                //close();
+                //Nuevo pedido
             }
         });
+    }
+    
+    public void nuevoPedido(){
+        
+        //Si la lista de pedidos contiene algo.
+        if(!listaPedidosVacia())
+        {
+            if (JOptionPane.showConfirmDialog(rootPane, "¿Desea crear un nuevo pedido? Los datos contenidos en el pedido actual serán eliminados.",
+                    "Nuevo pedido.", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
+            {
+                eliminarColaPedidos();
+                mostrarPedidos();
+            }
+        //Si a lista de pedidos está vacía.
+        }else
+            JOptionPane.showMessageDialog(null, "No hay ningún producto en la lista de pedidos.",
+                "Lista de pedidos vacía", JOptionPane.ERROR_MESSAGE);
     }
     
     //Creamos la instancia 'con' de tipo ConexionBD
@@ -73,18 +90,17 @@ public class HacerPedido extends javax.swing.JFrame {
             if (rs != null && rs.next() ) 
             { 
                 //codigo para tratar al conjunto de registros o al registro obtenido 
-                System.out.println("Se ha encontrado algo");
+                System.out.println("Se ha encontrado algo en la base de datos.");
                 //Regresa el puntero al inicio para no perder el primer dato de la tabla.
                 rs.beforeFirst();
             } 
             else 
             {
                 //si entra a este else quiere decir que no obtuviste ningun registro 
-                //o sea que tu ResultSet fue nulo.
-                //System.err.println("No se ha encontrado nada");
-                JOptionPane.showMessageDialog(null, "No hay ningún producto con ese nombre en la base de datos.",
-                "No se encontró el elemento", JOptionPane.INFORMATION_MESSAGE);
-                txtBusqueda.setText("");
+                //o sea que el ResultSet fue nulo.
+                System.err.println("No se ha encontrado nada en la base de datos");
+//                JOptionPane.showMessageDialog(null, "No hay ningún producto con ese nombre en la base de datos.",
+//                "No se encontró el elemento", JOptionPane.INFORMATION_MESSAGE);
                 txtBusqueda.grabFocus();
             }
             
@@ -122,24 +138,6 @@ public class HacerPedido extends javax.swing.JFrame {
             st = cn.createStatement();
             ResultSet rs = st.executeQuery(sql);
             
-            //Validamos que el resultset contenga datos o esté vacío.
-//            if (rs != null && rs.next() ) 
-//            { 
-//                //codigo para tratar al conjunto de registros o al registro obtenido 
-//                System.out.println("Se ha encontrado algo");
-//                //Regresa el puntero al inicio para no perder el primer dato de la tabla.
-//                rs.beforeFirst();
-//            } 
-//            else 
-//            {
-//                //si entra a este else quiere decir que no obtuviste ningun registro 
-//                //o sea que tu ResultSet fue nulo.
-//                //System.err.println("No se ha encontrado nada");
-//                JOptionPane.showMessageDialog(null, "No hay ningún producto con ese nombre en la base de datos.",
-//                "No se encontró el elemento", JOptionPane.INFORMATION_MESSAGE);
-//                txtBusqueda.grabFocus();
-//            }
-            
             while(rs.next())
                 {
                     pedidos[0] = rs.getString("cantidad");
@@ -155,6 +153,7 @@ public class HacerPedido extends javax.swing.JFrame {
         }
     }
     
+    //Agrega los productos a la lista de pedidos.
     public void agregarPedido()
     {
         int fila = tablaProductosRegistrados.getSelectedRow();
@@ -180,6 +179,7 @@ public class HacerPedido extends javax.swing.JFrame {
         }
     }
     
+    //Elimina la lista actual de los pedidos.
     public void eliminarColaPedidos()
     {
         String sql = "DELETE FROM pedido";
@@ -194,6 +194,7 @@ public class HacerPedido extends javax.swing.JFrame {
         }
     }
     
+    //Verifica que no se dupliquen los productos en los pedidos.
     public void pedidoDuplicado(String nombre)
     {
         String sql = "SELECT nombre from pedido WHERE nombre = '"+nombre+"'";
@@ -204,9 +205,6 @@ public class HacerPedido extends javax.swing.JFrame {
             
             if(rs.next())
             {
-//                JOptionPane.showMessageDialog(null, "Bienvenido.");
-//                Principal ventanaPrincipal = new Principal();
-//                ventanaPrincipal.setVisible(true);
                 JOptionPane.showMessageDialog(HacerPedido.this, "Ya existe un producto con este nombre.", "Error al intentar agregar.", JOptionPane.ERROR_MESSAGE);
             
             }else
@@ -216,6 +214,42 @@ public class HacerPedido extends javax.swing.JFrame {
         } catch (SQLException ex) {
             Logger.getLogger(HacerPedido.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public boolean listaPedidosVacia()
+    {
+        //Creamos nuestra sentencia SQL.
+        String sql = "SELECT nombre, familia, cantidad FROM pedido";
+        
+        Statement st;
+        try{
+            st = cn.createStatement();
+            ResultSet rs = st.executeQuery(sql);
+            
+            //Validamos que el resultset contenga datos o esté vacío.
+            if (rs != null && rs.next() ) 
+            { 
+                //codigo para tratar al conjunto de registros o al registro obtenido 
+                System.out.println("Se ha encontrado algo en la base de datos.");
+                //Regresa el puntero al inicio para no perder el primer dato de la tabla.
+                rs.beforeFirst();
+                return false;
+            } 
+            else 
+            {
+                //si entra a este else quiere decir que no obtuviste ningun registro 
+                //o sea que el ResultSet fue nulo.
+                System.err.println("No se ha encontrado nada en la base de datos");
+//                JOptionPane.showMessageDialog(null, "No hay ningún producto en la lista de pedidos.",
+//                "Lista de pedidos vacía", JOptionPane.ERROR_MESSAGE);
+                return true;
+            }
+            
+        } catch (SQLException ex) {
+            //Logger.getLogger(HacerPedido.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, ex);
+        }
+        return true;
     }
 
     /**
@@ -334,7 +368,7 @@ public class HacerPedido extends javax.swing.JFrame {
             .addGroup(Panel_listadoLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel3)
-                .addContainerGap(401, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         Panel_listadoLayout.setVerticalGroup(
             Panel_listadoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -365,8 +399,8 @@ public class HacerPedido extends javax.swing.JFrame {
         Panel_pedidoLayout.setHorizontalGroup(
             Panel_pedidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, Panel_pedidoLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 346, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE)
                 .addContainerGap())
         );
         Panel_pedidoLayout.setVerticalGroup(
@@ -425,14 +459,26 @@ public class HacerPedido extends javax.swing.JFrame {
             }
         });
 
-        btnPedido.setText(">>");
+        btnPedido.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
+        btnPedido.setForeground(new java.awt.Color(104, 159, 56));
+        btnPedido.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/greater/fast-forward.png"))); // NOI18N
+        btnPedido.setText("Agregar");
+        btnPedido.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnPedido.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnPedido.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         btnPedido.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnPedidoActionPerformed(evt);
             }
         });
 
-        jButton2.setText("+");
+        jButton2.setFont(new java.awt.Font("Lucida Grande", 1, 11)); // NOI18N
+        jButton2.setForeground(new java.awt.Color(13, 71, 161));
+        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/refresh/refresh.png"))); // NOI18N
+        jButton2.setText("Nuevo pedido");
+        jButton2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jButton2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton2.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
@@ -447,16 +493,17 @@ public class HacerPedido extends javax.swing.JFrame {
             .addGroup(Panel_generalLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(Panel_generalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(Busqueda_producto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(Panel_generalLayout.createSequentialGroup()
+                        .addComponent(Busqueda_producto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton2))
                     .addGroup(Panel_generalLayout.createSequentialGroup()
                         .addComponent(jButton1)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(Panel_generalLayout.createSequentialGroup()
                         .addComponent(Panel_productos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addGroup(Panel_generalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(btnPedido, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE)
-                            .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(btnPedido, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(Panel_pedido, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
@@ -467,20 +514,19 @@ public class HacerPedido extends javax.swing.JFrame {
             .addGroup(Panel_generalLayout.createSequentialGroup()
                 .addComponent(Panel_busqueda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(Busqueda_producto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(Panel_generalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(Busqueda_producto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton2))
                 .addGap(18, 18, 18)
                 .addComponent(Panel_listado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addGroup(Panel_generalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(Panel_generalLayout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addGroup(Panel_generalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(Panel_productos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(Panel_pedido, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(Panel_generalLayout.createSequentialGroup()
-                        .addGap(51, 51, 51)
-                        .addComponent(jButton2)
-                        .addGap(142, 142, 142)
-                        .addComponent(btnPedido)))
+                        .addGap(196, 196, 196)
+                        .addComponent(btnPedido))
+                    .addGroup(Panel_generalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(Panel_productos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(Panel_pedido, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jButton1)
                 .addContainerGap())
@@ -529,8 +575,7 @@ public class HacerPedido extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        eliminarColaPedidos();
-        mostrarPedidos();
+        nuevoPedido();
     }//GEN-LAST:event_jButton2ActionPerformed
 
     /**

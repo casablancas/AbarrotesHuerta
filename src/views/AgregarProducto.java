@@ -41,14 +41,23 @@ public class AgregarProducto extends javax.swing.JFrame {
     
     public void agregarProducto()
     {
-        String familia = "";
-        if(optFam1.isSelected())
+        String familia = null;
+        
+        if (optFam1.isSelected())
             familia = "Familia 1";
-        else if(optFam2.isSelected())
+        else if (optFam2.isSelected())
             familia = "Familia 2";
+        else if (optFam3.isSelected())
+            familia = "Familia 3";
+        else if (optFam4.isSelected())
+            familia = "Familia 4";
+        else if (optFam5.isSelected())
+            familia = "Familia 5";
+        else if (optFam6.isSelected())
+            familia = "Familia 6";
         
         String sql = "INSERT INTO producto (nombre, familia) VALUES (?,?)";
-        //String sql = "INSERT INTO producto SELECT nombre FROM producto GROUP BY nombre";
+        
         try {
             PreparedStatement pst = cn.prepareStatement(sql);
             pst.setString(1, txtProducto.getText());
@@ -80,9 +89,6 @@ public class AgregarProducto extends javax.swing.JFrame {
             
             if(rs.next())
             {
-//                JOptionPane.showMessageDialog(null, "Bienvenido.");
-//                Principal ventanaPrincipal = new Principal();
-//                ventanaPrincipal.setVisible(true);
                 JOptionPane.showMessageDialog(AgregarProducto.this, "Ya existe un producto con este nombre.", "Error al intentar agregar.", JOptionPane.ERROR_MESSAGE);
             
             }else
@@ -109,11 +115,11 @@ public class AgregarProducto extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         txtProducto = new javax.swing.JTextField();
         jPanel5 = new javax.swing.JPanel();
-        jRadioButton1 = new javax.swing.JRadioButton();
-        jRadioButton2 = new javax.swing.JRadioButton();
-        jRadioButton3 = new javax.swing.JRadioButton();
+        optFam5 = new javax.swing.JRadioButton();
+        optFam3 = new javax.swing.JRadioButton();
+        optFam4 = new javax.swing.JRadioButton();
         optFam1 = new javax.swing.JRadioButton();
-        jRadioButton6 = new javax.swing.JRadioButton();
+        optFam6 = new javax.swing.JRadioButton();
         optFam2 = new javax.swing.JRadioButton();
         btnAgregarProducto = new javax.swing.JButton();
         jPanel6 = new javax.swing.JPanel();
@@ -139,22 +145,22 @@ public class AgregarProducto extends javax.swing.JFrame {
         jPanel5.setBackground(new java.awt.Color(255, 255, 255));
         jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(191, 54, 12), 2, true), "Seleccione la famila", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Lucida Grande", 0, 13), new java.awt.Color(191, 54, 12))); // NOI18N
 
-        buttonGroupFamilias.add(jRadioButton1);
-        jRadioButton1.setText("Familia 5");
-        jRadioButton1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        buttonGroupFamilias.add(optFam5);
+        optFam5.setText("Familia 5");
+        optFam5.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
-        buttonGroupFamilias.add(jRadioButton2);
-        jRadioButton2.setText("Familia 3");
-        jRadioButton2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jRadioButton2.addActionListener(new java.awt.event.ActionListener() {
+        buttonGroupFamilias.add(optFam3);
+        optFam3.setText("Familia 3");
+        optFam3.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        optFam3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton2ActionPerformed(evt);
+                optFam3ActionPerformed(evt);
             }
         });
 
-        buttonGroupFamilias.add(jRadioButton3);
-        jRadioButton3.setText("Familia 4");
-        jRadioButton3.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        buttonGroupFamilias.add(optFam4);
+        optFam4.setText("Familia 4");
+        optFam4.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         buttonGroupFamilias.add(optFam1);
         optFam1.setText("Familia 1");
@@ -165,9 +171,9 @@ public class AgregarProducto extends javax.swing.JFrame {
             }
         });
 
-        buttonGroupFamilias.add(jRadioButton6);
-        jRadioButton6.setText("Familia 6");
-        jRadioButton6.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        buttonGroupFamilias.add(optFam6);
+        optFam6.setText("Familia 6");
+        optFam6.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         buttonGroupFamilias.add(optFam2);
         optFam2.setText("Familia 2");
@@ -188,15 +194,15 @@ public class AgregarProducto extends javax.swing.JFrame {
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addComponent(optFam2)
                         .addGap(18, 18, 18)
-                        .addComponent(jRadioButton3))
+                        .addComponent(optFam4))
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addComponent(optFam1)
                         .addGap(18, 18, 18)
-                        .addComponent(jRadioButton2)))
+                        .addComponent(optFam3)))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jRadioButton1)
-                    .addComponent(jRadioButton6, javax.swing.GroupLayout.Alignment.TRAILING))
+                    .addComponent(optFam5)
+                    .addComponent(optFam6, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
@@ -204,13 +210,13 @@ public class AgregarProducto extends javax.swing.JFrame {
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jRadioButton1)
-                    .addComponent(jRadioButton2)
+                    .addComponent(optFam5)
+                    .addComponent(optFam3)
                     .addComponent(optFam1))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jRadioButton3)
-                    .addComponent(jRadioButton6)
+                    .addComponent(optFam4)
+                    .addComponent(optFam6)
                     .addComponent(optFam2))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -333,9 +339,9 @@ public class AgregarProducto extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_formWindowClosing
 
-    private void jRadioButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton2ActionPerformed
+    private void optFam3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_optFam3ActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jRadioButton2ActionPerformed
+    }//GEN-LAST:event_optFam3ActionPerformed
 
     private void optFam1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_optFam1ActionPerformed
         // TODO add your handling code here:
@@ -413,12 +419,12 @@ public class AgregarProducto extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
-    private javax.swing.JRadioButton jRadioButton1;
-    private javax.swing.JRadioButton jRadioButton2;
-    private javax.swing.JRadioButton jRadioButton3;
-    private javax.swing.JRadioButton jRadioButton6;
     private javax.swing.JRadioButton optFam1;
     private javax.swing.JRadioButton optFam2;
+    private javax.swing.JRadioButton optFam3;
+    private javax.swing.JRadioButton optFam4;
+    private javax.swing.JRadioButton optFam5;
+    private javax.swing.JRadioButton optFam6;
     private javax.swing.JTextField txtProducto;
     // End of variables declaration//GEN-END:variables
 }
