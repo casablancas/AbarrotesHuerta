@@ -6,16 +6,32 @@
 package views;
 
 import DB.ConexionBD;
+import java.awt.print.PrinterException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+
+import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.PdfTemplate;
+import com.lowagie.text.pdf.PdfWriter;
+import java.awt.Desktop;
+import java.awt.Graphics2D;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 /**
  *
@@ -115,6 +131,8 @@ public class HacerPedido extends javax.swing.JFrame {
         } catch (SQLException ex) {
             //Logger.getLogger(HacerPedido.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, ex);
+//            JOptionPane.showMessageDialog(null, "Se ha agotado el tiempo de espera para conectarse a la base de datos.",
+//            "Advertencia", JOptionPane.WARNING_MESSAGE);
         }
     }
     
@@ -150,6 +168,8 @@ public class HacerPedido extends javax.swing.JFrame {
         } catch (SQLException ex) {
             //Logger.getLogger(HacerPedido.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, ex);
+//            JOptionPane.showMessageDialog(null, "Se ha agotado el tiempo de espera para conectarse a la base de datos.",
+//            "Advertencia", JOptionPane.WARNING_MESSAGE);
         }
     }
     
@@ -174,7 +194,8 @@ public class HacerPedido extends javax.swing.JFrame {
 //            "Inserción correcta", JOptionPane.INFORMATION_MESSAGE);
         } catch (SQLException ex) {
             //Logger.getLogger(AgregarProducto.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(HacerPedido.this, "Ya existe este producto en la lista de pedidos.", "Error al intentar agregar al pedido.", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(HacerPedido.this, "Ya existe este producto en la lista de pedidos.", 
+                    "Error al intentar agregar al pedido", JOptionPane.ERROR_MESSAGE);
             
         }
     }
@@ -205,7 +226,8 @@ public class HacerPedido extends javax.swing.JFrame {
             
             if(rs.next())
             {
-                JOptionPane.showMessageDialog(HacerPedido.this, "Ya existe un producto con este nombre.", "Error al intentar agregar.", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(HacerPedido.this, "Ya existe un producto con este nombre.", 
+                        "Error al intentar agregar", JOptionPane.ERROR_MESSAGE);
             
             }else
             {
@@ -251,6 +273,58 @@ public class HacerPedido extends javax.swing.JFrame {
         }
         return true;
     }
+    
+    public void printPedido(String dia, String mes, String año, String hora)
+    {
+        try {
+            MessageFormat headerFormat = new MessageFormat("Descripción de la consulta del paciente:\n");
+            MessageFormat footerFormat = new MessageFormat("CAPGRAS - FePro: " +dia+mes+año+"  "+hora);
+            //tablaDatos.print(JTable.PrintMode.NORMAL, headerFormat, footerFormat);
+            //tablaDatos.print(JTable.PrintMode.valueOf(lastid));
+            tablaPedidos.print(JTable.PrintMode.NORMAL, headerFormat, footerFormat, rootPaneCheckingEnabled, null, rootPaneCheckingEnabled);
+        } catch (PrinterException ex) {
+            //Logger.getLogger(HacerPedido.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "Algo ha salido mal, no se puede imprimir el pedido.");
+        }
+    }
+    
+        public void generatePDF(String nombreArchivo) throws DocumentException, FileNotFoundException, IOException
+        { 
+            Document document = new Document();
+            PdfWriter writer;
+            
+            String username = System.getProperty("user.name");
+            
+            //String filepath = "/Users/alejandro/NetBeansProjects/QRGenerator/qrCode.png";
+            String filepath = "/Users/"+username+"/Desktop/"+nombreArchivo+".pdf";
+
+            writer = PdfWriter.getInstance(document, new FileOutputStream(filepath));
+
+            // writer = PdfWriter.getInstance(document, new
+            // FileOutputStream("my_jtable_fonts.pdf"));
+
+            document.open();
+            PdfContentByte cb = writer.getDirectContent();
+
+            PdfTemplate tp = cb.createTemplate(500, 500);
+            Graphics2D g2;
+
+            g2 = tp.createGraphicsShapes(500, 500);
+
+            // g2 = tp.createGraphics(500, 500);
+            tablaPedidos.print(g2);
+            g2.dispose();
+            //cb.addTemplate(tp, 30, 300);
+            cb.addTemplate(tp, 75, 300);
+            
+//            //String archivo = System.getProperty("user.dir")+"/qrCode.png";
+//            String archivo = System.getProperty(filepath);
+//            Desktop d = Desktop.getDesktop();
+//            d.open(new File(archivo));
+
+            // step 5: we close the document
+            document.close();
+        }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -285,6 +359,7 @@ public class HacerPedido extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         btnPedido = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -485,6 +560,13 @@ public class HacerPedido extends javax.swing.JFrame {
             }
         });
 
+        jButton3.setText("Imprimir pedido");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout Panel_generalLayout = new javax.swing.GroupLayout(Panel_general);
         Panel_general.setLayout(Panel_generalLayout);
         Panel_generalLayout.setHorizontalGroup(
@@ -498,14 +580,18 @@ public class HacerPedido extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton2))
                     .addGroup(Panel_generalLayout.createSequentialGroup()
-                        .addComponent(jButton1)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(Panel_generalLayout.createSequentialGroup()
-                        .addComponent(Panel_productos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(Panel_generalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(Panel_generalLayout.createSequentialGroup()
+                                .addComponent(Panel_productos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnPedido, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jButton1))
                         .addGap(18, 18, 18)
-                        .addComponent(btnPedido, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(Panel_pedido, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addGroup(Panel_generalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(Panel_generalLayout.createSequentialGroup()
+                                .addComponent(jButton3)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(Panel_pedido, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
             .addComponent(Panel_listado, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
@@ -527,9 +613,15 @@ public class HacerPedido extends javax.swing.JFrame {
                     .addGroup(Panel_generalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                         .addComponent(Panel_productos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(Panel_pedido, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton1)
-                .addContainerGap())
+                .addGroup(Panel_generalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(Panel_generalLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton1)
+                        .addContainerGap())
+                    .addGroup(Panel_generalLayout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton3)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -578,6 +670,41 @@ public class HacerPedido extends javax.swing.JFrame {
         nuevoPedido();
     }//GEN-LAST:event_jButton2ActionPerformed
 
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+        Calendar cal = Calendar.getInstance();
+        String dia = cal.get(Calendar.DATE)+"/";
+        //String mes = ""+cal.get(Calendar.MONTH);
+        String mes = new SimpleDateFormat("MMMM").format(cal.getTime());
+        String año = "/"+cal.get(Calendar.YEAR);
+        //String fecha = cal.get(Calendar.DATE)+"/"+cal.get((Calendar.MONTH))+"/"+cal.get(Calendar.YEAR);
+        String hora = cal.get(Calendar.HOUR)+":"+cal.get(Calendar.MINUTE)+":"+cal.get(Calendar.SECOND);
+        
+        //Obtenemos el mes con el nombre completo.
+        System.out.println(new SimpleDateFormat("MMMM").format(cal.getTime()));
+        //Obtenemos el mes con las primeras 3 letras.
+        System.out.println(new SimpleDateFormat("MMM").format(cal.getTime()));
+        //Obtenemos el mes con 2 digitos.
+        System.out.println(new SimpleDateFormat("MM").format(cal.getTime()));
+        //Obtenemos el mes con 1 dígito.
+        System.out.println(new SimpleDateFormat("M").format(cal.getTime()));
+        
+        System.out.println("Abarrotes Huerta: "+dia+(mes+1)+año+"  "+hora);
+        
+        String nombreArvhivo = JOptionPane.showInputDialog("Ingrese nombre del archivo del archivo (sin especificar formato o extensión):", "");
+        
+        //imprimirPedido(dia, mes, año, hora);
+        try {
+            generatePDF(nombreArvhivo);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(HacerPedido.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (DocumentException ex) {
+            Logger.getLogger(HacerPedido.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(HacerPedido.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButton3ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -623,6 +750,7 @@ public class HacerPedido extends javax.swing.JFrame {
     private javax.swing.JButton btnPedido;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel8;

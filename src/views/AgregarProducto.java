@@ -71,7 +71,8 @@ public class AgregarProducto extends javax.swing.JFrame {
         } catch (SQLException ex) {
 //            JOptionPane.showMessageDialog(null, "No se ha podido insertar el producto porque ya existe.",
 //            "Producto ya existente", JOptionPane.INFORMATION_MESSAGE);
-            JOptionPane.showMessageDialog(AgregarProducto.this, "Ya existe un producto con este nombre.", "Error al intentar agregar.", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(AgregarProducto.this, "Ya existe un producto con este nombre.", 
+                    "Error al intentar agregar", JOptionPane.ERROR_MESSAGE);
             System.err.println(ex);
             txtProducto.setText("");
             txtProducto.grabFocus();
@@ -89,7 +90,8 @@ public class AgregarProducto extends javax.swing.JFrame {
             
             if(rs.next())
             {
-                JOptionPane.showMessageDialog(AgregarProducto.this, "Ya existe un producto con este nombre.", "Error al intentar agregar.", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(AgregarProducto.this, "Ya existe un producto con este nombre.", 
+                        "Error al intentar agregar", JOptionPane.ERROR_MESSAGE);
             
             }else
             {

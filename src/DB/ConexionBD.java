@@ -47,6 +47,7 @@ public Connection conectar(){
     //String BaseDeDatos = "jdbc:mysql://23.229.190.232/ServicioIng";
     //String BaseDeDatos = "jdbc:mysql://localhost/servicioing?user=root&password=";
     //String BaseDeDatos = "jdbc:mysql://sql5.freemysqlhosting.net/sql5108911?user=sql5108911&password=Rd3DwnStke";
+    //+"?autoReconnect=true&useSSL=false "
     String BaseDeDatos = "jdbc:mysql://"+nomservidor+"/"+db+"?user="+user+"&password="+pass;
     Class.forName("com.mysql.jdbc.Driver");
     conn = DriverManager.getConnection(BaseDeDatos);
@@ -61,6 +62,8 @@ public Connection conectar(){
     }
     }catch(SQLException e){
         JOptionPane.showMessageDialog(null, e.getMessage());
+//        JOptionPane.showMessageDialog(null, "Se ha agotado el tiempo de espera para conectarse a la base de datos.",
+//            "Advertencia", JOptionPane.WARNING_MESSAGE);
     } catch (ClassNotFoundException e) {
         JOptionPane.showMessageDialog(null, "Se produjo el siguiente error: "+e.getMessage());
     }catch (NullPointerException e){
