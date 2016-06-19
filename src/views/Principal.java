@@ -5,7 +5,9 @@
  */
 package views;
 
+import com.apple.eawt.Application;
 import javafx.scene.control.Button;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
@@ -19,7 +21,14 @@ public class Principal extends javax.swing.JFrame {
      * Creates new form Principal
      */
     public Principal() {
+        String username = System.getProperty("user.name");
+        
+        setIconImage(new ImageIcon("/Users/"+username+"/NetbeansProjects/Abarrotera-Huerta/src/icons/store/store.png").getImage());
+        Application.getApplication().setDockIconImage(
+            new ImageIcon("/Users/"+username+"/NetbeansProjects/Abarrotera-Huerta/src/icons/store/store.png").getImage());
+        
         initComponents();
+        
         this.setTitle("Menú pricipal");
         this.setLocationRelativeTo(null);
         this.setResizable(false);

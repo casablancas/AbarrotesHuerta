@@ -274,8 +274,27 @@ public class HacerPedido extends javax.swing.JFrame {
         return true;
     }
     
-    public void printPedido(String dia, String mes, String año, String hora)
+    public void printPedido()
     {
+        Calendar cal = Calendar.getInstance();
+        String dia = cal.get(Calendar.DATE)+"/";
+        //String mes = ""+cal.get(Calendar.MONTH);
+        String mes = new SimpleDateFormat("MMMM").format(cal.getTime());
+        String año = "/"+cal.get(Calendar.YEAR);
+        //String fecha = cal.get(Calendar.DATE)+"/"+cal.get((Calendar.MONTH))+"/"+cal.get(Calendar.YEAR);
+        String hora = cal.get(Calendar.HOUR)+":"+cal.get(Calendar.MINUTE)+":"+cal.get(Calendar.SECOND);
+        
+        //Obtenemos el mes con el nombre completo.
+        System.out.println(new SimpleDateFormat("MMMM").format(cal.getTime()));
+        //Obtenemos el mes con las primeras 3 letras.
+        System.out.println(new SimpleDateFormat("MMM").format(cal.getTime()));
+        //Obtenemos el mes con 2 digitos.
+        System.out.println(new SimpleDateFormat("MM").format(cal.getTime()));
+        //Obtenemos el mes con 1 dígito.
+        System.out.println(new SimpleDateFormat("M").format(cal.getTime()));
+        
+        System.out.println("Abarrotes Huerta: "+dia+(mes+1)+año+"  "+hora);
+        
         try {
             MessageFormat headerFormat = new MessageFormat("Descripción de la consulta del paciente:\n");
             MessageFormat footerFormat = new MessageFormat("CAPGRAS - FePro: " +dia+mes+año+"  "+hora);
@@ -288,8 +307,9 @@ public class HacerPedido extends javax.swing.JFrame {
         }
     }
     
-        public void generatePDF(String nombreArchivo) throws DocumentException, FileNotFoundException, IOException
-        { 
+    
+    public void generatePDF(String nombreArchivo) throws DocumentException, FileNotFoundException, IOException
+    { 
             Document document = new Document();
             PdfWriter writer;
             
@@ -324,7 +344,7 @@ public class HacerPedido extends javax.swing.JFrame {
 
             // step 5: we close the document
             document.close();
-        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -359,7 +379,8 @@ public class HacerPedido extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         btnPedido = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        btnGeneraPDF = new javax.swing.JButton();
+        btnImprimePedido = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -475,7 +496,7 @@ public class HacerPedido extends javax.swing.JFrame {
             Panel_pedidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, Panel_pedidoLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                 .addContainerGap())
         );
         Panel_pedidoLayout.setVerticalGroup(
@@ -538,6 +559,7 @@ public class HacerPedido extends javax.swing.JFrame {
         btnPedido.setForeground(new java.awt.Color(104, 159, 56));
         btnPedido.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/greater/fast-forward.png"))); // NOI18N
         btnPedido.setText("Agregar");
+        btnPedido.setBorderPainted(false);
         btnPedido.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnPedido.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnPedido.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -551,6 +573,7 @@ public class HacerPedido extends javax.swing.JFrame {
         jButton2.setForeground(new java.awt.Color(13, 71, 161));
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/refresh/refresh.png"))); // NOI18N
         jButton2.setText("Nuevo pedido");
+        jButton2.setBorderPainted(false);
         jButton2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jButton2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButton2.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -560,10 +583,31 @@ public class HacerPedido extends javax.swing.JFrame {
             }
         });
 
-        jButton3.setText("Imprimir pedido");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        btnGeneraPDF.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
+        btnGeneraPDF.setForeground(new java.awt.Color(183, 28, 28));
+        btnGeneraPDF.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/pdf/pdf.png"))); // NOI18N
+        btnGeneraPDF.setText("Generar PDF");
+        btnGeneraPDF.setBorderPainted(false);
+        btnGeneraPDF.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnGeneraPDF.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnGeneraPDF.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnGeneraPDF.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                btnGeneraPDFActionPerformed(evt);
+            }
+        });
+
+        btnImprimePedido.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
+        btnImprimePedido.setForeground(new java.awt.Color(97, 97, 97));
+        btnImprimePedido.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/printer/printer.png"))); // NOI18N
+        btnImprimePedido.setText("Imprimir pedido");
+        btnImprimePedido.setBorderPainted(false);
+        btnImprimePedido.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnImprimePedido.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnImprimePedido.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnImprimePedido.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnImprimePedidoActionPerformed(evt);
             }
         });
 
@@ -588,10 +632,12 @@ public class HacerPedido extends javax.swing.JFrame {
                             .addComponent(jButton1))
                         .addGap(18, 18, 18)
                         .addGroup(Panel_generalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(Panel_pedido, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(Panel_generalLayout.createSequentialGroup()
-                                .addComponent(jButton3)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(Panel_pedido, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                                .addGap(0, 168, Short.MAX_VALUE)
+                                .addComponent(btnImprimePedido)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnGeneraPDF, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addContainerGap())
             .addComponent(Panel_listado, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
@@ -620,8 +666,10 @@ public class HacerPedido extends javax.swing.JFrame {
                         .addContainerGap())
                     .addGroup(Panel_generalLayout.createSequentialGroup()
                         .addGap(18, 18, 18)
-                        .addComponent(jButton3)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addGroup(Panel_generalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnGeneraPDF)
+                            .addComponent(btnImprimePedido))
+                        .addContainerGap(7, Short.MAX_VALUE))))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -670,30 +718,10 @@ public class HacerPedido extends javax.swing.JFrame {
         nuevoPedido();
     }//GEN-LAST:event_jButton2ActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void btnGeneraPDFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGeneraPDFActionPerformed
         // TODO add your handling code here:
-        Calendar cal = Calendar.getInstance();
-        String dia = cal.get(Calendar.DATE)+"/";
-        //String mes = ""+cal.get(Calendar.MONTH);
-        String mes = new SimpleDateFormat("MMMM").format(cal.getTime());
-        String año = "/"+cal.get(Calendar.YEAR);
-        //String fecha = cal.get(Calendar.DATE)+"/"+cal.get((Calendar.MONTH))+"/"+cal.get(Calendar.YEAR);
-        String hora = cal.get(Calendar.HOUR)+":"+cal.get(Calendar.MINUTE)+":"+cal.get(Calendar.SECOND);
+        String nombreArvhivo = JOptionPane.showInputDialog("Ingrese nombre del archivo (sin especificar formato o extensión):", "Nombre del archivo");
         
-        //Obtenemos el mes con el nombre completo.
-        System.out.println(new SimpleDateFormat("MMMM").format(cal.getTime()));
-        //Obtenemos el mes con las primeras 3 letras.
-        System.out.println(new SimpleDateFormat("MMM").format(cal.getTime()));
-        //Obtenemos el mes con 2 digitos.
-        System.out.println(new SimpleDateFormat("MM").format(cal.getTime()));
-        //Obtenemos el mes con 1 dígito.
-        System.out.println(new SimpleDateFormat("M").format(cal.getTime()));
-        
-        System.out.println("Abarrotes Huerta: "+dia+(mes+1)+año+"  "+hora);
-        
-        String nombreArvhivo = JOptionPane.showInputDialog("Ingrese nombre del archivo del archivo (sin especificar formato o extensión):", "");
-        
-        //imprimirPedido(dia, mes, año, hora);
         try {
             generatePDF(nombreArvhivo);
         } catch (FileNotFoundException ex) {
@@ -703,7 +731,12 @@ public class HacerPedido extends javax.swing.JFrame {
         } catch (IOException ex) {
             Logger.getLogger(HacerPedido.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }//GEN-LAST:event_jButton3ActionPerformed
+    }//GEN-LAST:event_btnGeneraPDFActionPerformed
+
+    private void btnImprimePedidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImprimePedidoActionPerformed
+        // TODO add your handling code here:
+        printPedido();
+    }//GEN-LAST:event_btnImprimePedidoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -747,10 +780,11 @@ public class HacerPedido extends javax.swing.JFrame {
     private javax.swing.JPanel Panel_listado;
     private javax.swing.JPanel Panel_pedido;
     private javax.swing.JPanel Panel_productos;
+    private javax.swing.JButton btnGeneraPDF;
+    private javax.swing.JButton btnImprimePedido;
     private javax.swing.JButton btnPedido;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel8;
