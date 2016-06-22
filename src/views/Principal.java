@@ -5,8 +5,17 @@
  */
 package views;
 
-import com.apple.eawt.Application;
+//import com.apple.eawt.Application;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.scene.control.Button;
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
@@ -21,13 +30,29 @@ public class Principal extends javax.swing.JFrame {
      * Creates new form Principal
      */
     public Principal() {
+        
+        this.setIconImage(Toolkit.getDefaultToolkit().getImage("views\\store.png"));
+        //this.setIconImage(Toolkit.getDefaultToolkit().getImage("/views/store.png"));
+        
         String username = System.getProperty("user.name");
         
-        setIconImage(new ImageIcon("/Users/"+username+"/NetbeansProjects/Abarrotera-Huerta/src/icons/store/store.png").getImage());
-        Application.getApplication().setDockIconImage(
-            new ImageIcon("/Users/"+username+"/NetbeansProjects/Abarrotera-Huerta/src/icons/store/store.png").getImage());
+//        setIconImage(new ImageIcon("/Users/"+username+"/NetbeansProjects/Abarrotera-Huerta/src/icons/store/store.png").getImage());
+//        Application.getApplication().setDockIconImage(
+//            new ImageIcon("/Users/"+username+"/NetbeansProjects/Abarrotera-Huerta/src/icons/store/store.png").getImage());
         
         initComponents();
+        
+//        try {
+//            String path = "http://res.cloudinary.com/casablancas/image/upload/v1466318859/Menu%CC%81_principal_wffiud.png";
+//                  URL url = new URL(path);
+//                  BufferedImage img = ImageIO.read(url);
+//                  ImageIcon icon = new ImageIcon(img);
+//                  JOptionPane.showMessageDialog(null, icon);
+//               } catch (MalformedURLException e) {
+//                  e.printStackTrace();
+//               } catch (IOException e) {
+//                  e.printStackTrace();
+//               } 
         
         this.setTitle("Menú pricipal");
         this.setLocationRelativeTo(null);
@@ -67,6 +92,7 @@ public class Principal extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
+        setIconImage(new ImageIcon(getClass().getResource("/views/store.png")).getImage());
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -75,14 +101,12 @@ public class Principal extends javax.swing.JFrame {
 
         btnAgregarProducto.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
         btnAgregarProducto.setForeground(new java.awt.Color(255, 87, 34));
-        btnAgregarProducto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/add-objects (3).png"))); // NOI18N
+        btnAgregarProducto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/nuevo_producto/bag.png"))); // NOI18N
         btnAgregarProducto.setText("Agregar producto");
         btnAgregarProducto.setBorderPainted(false);
         btnAgregarProducto.setContentAreaFilled(false);
         btnAgregarProducto.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnAgregarProducto.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnAgregarProducto.setPressedIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/add-objects (2).png"))); // NOI18N
-        btnAgregarProducto.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/add-objects (1).png"))); // NOI18N
         btnAgregarProducto.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
         btnAgregarProducto.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         btnAgregarProducto.addActionListener(new java.awt.event.ActionListener() {
@@ -93,14 +117,12 @@ public class Principal extends javax.swing.JFrame {
 
         btnHacerPedido.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
         btnHacerPedido.setForeground(new java.awt.Color(255, 87, 34));
-        btnHacerPedido.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/hacer_pedido/send-message-button (2).png"))); // NOI18N
+        btnHacerPedido.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/hacer_pedido/delivery-truck.png"))); // NOI18N
         btnHacerPedido.setText("Hacer pedido");
         btnHacerPedido.setBorderPainted(false);
         btnHacerPedido.setContentAreaFilled(false);
         btnHacerPedido.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnHacerPedido.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnHacerPedido.setPressedIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/hacer_pedido/send-message-button (1).png"))); // NOI18N
-        btnHacerPedido.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/hacer_pedido/send-message-button.png"))); // NOI18N
         btnHacerPedido.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
         btnHacerPedido.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         btnHacerPedido.addActionListener(new java.awt.event.ActionListener() {
@@ -141,17 +163,17 @@ public class Principal extends javax.swing.JFrame {
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(122, 122, 122)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel1)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(120, 120, 120))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(18, 18, 18)
+                .addContainerGap()
                 .addComponent(jLabel1)
-                .addContainerGap(21, Short.MAX_VALUE))
+                .addContainerGap(33, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);

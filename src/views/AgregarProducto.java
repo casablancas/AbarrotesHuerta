@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 /**
@@ -32,6 +33,7 @@ public class AgregarProducto extends javax.swing.JFrame {
         this.setResizable(false);
         txtProducto.grabFocus();
         optFam1.setSelected(true);
+        btnAgregarProducto.setEnabled(false);
     }
     
     //Creamos la instancia 'con' de tipo ConexionBD
@@ -78,6 +80,7 @@ public class AgregarProducto extends javax.swing.JFrame {
             txtProducto.grabFocus();
             //Logger.getLogger(AgregarProducto.class.getName()).log(Level.SEVERE, null, ex);
         }
+        cc.desconectar();
     }
     
     public void productoDuplicado(String nombre)
@@ -100,6 +103,14 @@ public class AgregarProducto extends javax.swing.JFrame {
         } catch (SQLException ex) {
             Logger.getLogger(HacerPedido.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public void activaBoton()
+    {
+        if(txtProducto.getText().equals(""))
+            btnAgregarProducto.setEnabled(false);
+        else
+            btnAgregarProducto.setEnabled(true);
     }
 
     /**
@@ -129,6 +140,7 @@ public class AgregarProducto extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        setIconImage(new ImageIcon(getClass().getResource("/views/store.png")).getImage());
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
@@ -144,13 +156,21 @@ public class AgregarProducto extends javax.swing.JFrame {
         jLabel1.setForeground(new java.awt.Color(191, 54, 12));
         jLabel1.setText("Nombre producto:");
 
+        txtProducto.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtProductoKeyReleased(evt);
+            }
+        });
+
         jPanel5.setBackground(new java.awt.Color(255, 255, 255));
         jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(191, 54, 12), 2, true), "Seleccione la famila", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Lucida Grande", 0, 13), new java.awt.Color(191, 54, 12))); // NOI18N
 
+        optFam5.setBackground(new java.awt.Color(255, 255, 255));
         buttonGroupFamilias.add(optFam5);
         optFam5.setText("Familia 5");
         optFam5.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
+        optFam3.setBackground(new java.awt.Color(255, 255, 255));
         buttonGroupFamilias.add(optFam3);
         optFam3.setText("Familia 3");
         optFam3.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -160,10 +180,12 @@ public class AgregarProducto extends javax.swing.JFrame {
             }
         });
 
+        optFam4.setBackground(new java.awt.Color(255, 255, 255));
         buttonGroupFamilias.add(optFam4);
         optFam4.setText("Familia 4");
         optFam4.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
+        optFam1.setBackground(new java.awt.Color(255, 255, 255));
         buttonGroupFamilias.add(optFam1);
         optFam1.setText("Familia 1");
         optFam1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -173,10 +195,12 @@ public class AgregarProducto extends javax.swing.JFrame {
             }
         });
 
+        optFam6.setBackground(new java.awt.Color(255, 255, 255));
         buttonGroupFamilias.add(optFam6);
         optFam6.setText("Familia 6");
         optFam6.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
+        optFam2.setBackground(new java.awt.Color(255, 255, 255));
         buttonGroupFamilias.add(optFam2);
         optFam2.setText("Familia 2");
         optFam2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -223,7 +247,10 @@ public class AgregarProducto extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        btnAgregarProducto.setText("Agregar");
+        btnAgregarProducto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/save/diskette.png"))); // NOI18N
+        btnAgregarProducto.setBorderPainted(false);
+        btnAgregarProducto.setContentAreaFilled(false);
+        btnAgregarProducto.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnAgregarProducto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAgregarProductoActionPerformed(evt);
@@ -285,6 +312,7 @@ public class AgregarProducto extends javax.swing.JFrame {
 
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/home/home (2).png"))); // NOI18N
         jButton1.setBorderPainted(false);
+        jButton1.setContentAreaFilled(false);
         jButton1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jButton1.setPressedIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/home/home (1).png"))); // NOI18N
         jButton1.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/home/home.png"))); // NOI18N
@@ -298,15 +326,15 @@ public class AgregarProducto extends javax.swing.JFrame {
         Panel_general.setLayout(Panel_generalLayout);
         Panel_generalLayout.setHorizontalGroup(
             Panel_generalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(Panel_generalLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(Panel_generalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(Ingreso_datos, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(Ingreso_datos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(Panel_generalLayout.createSequentialGroup()
                         .addComponent(jButton1)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
+            .addComponent(jPanel6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         Panel_generalLayout.setVerticalGroup(
             Panel_generalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -314,9 +342,9 @@ public class AgregarProducto extends javax.swing.JFrame {
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(Ingreso_datos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton1)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -339,6 +367,7 @@ public class AgregarProducto extends javax.swing.JFrame {
         // TODO add your handling code here:
         new Principal().setVisible(true);
         this.dispose();
+        cc.desconectar();
     }//GEN-LAST:event_formWindowClosing
 
     private void optFam3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_optFam3ActionPerformed
@@ -374,6 +403,11 @@ public class AgregarProducto extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "No se puede insertar un producto vacío.",
             "Ha ocurrido un error", JOptionPane.WARNING_MESSAGE);
     }//GEN-LAST:event_btnAgregarProductoActionPerformed
+
+    private void txtProductoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtProductoKeyReleased
+        // TODO add your handling code here:
+        activaBoton();
+    }//GEN-LAST:event_txtProductoKeyReleased
 
     /**
      * @param args the command line arguments

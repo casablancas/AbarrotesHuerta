@@ -23,15 +23,20 @@ import javax.swing.table.DefaultTableModel;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
+import com.lowagie.text.PageSize;
 import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfTemplate;
 import com.lowagie.text.pdf.PdfWriter;
 import java.awt.Desktop;
 import java.awt.Graphics2D;
+import java.awt.Shape;
+import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import javax.swing.ImageIcon;
 
 /**
  *
@@ -51,6 +56,7 @@ public class HacerPedido extends javax.swing.JFrame {
         mostrarProductos("");
         mostrarPedidos();
         tablaProductosRegistrados.setEditingRow(ERROR);
+        //btnNuevoPedido.setEnabled(false);
         
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
@@ -118,6 +124,7 @@ public class HacerPedido extends javax.swing.JFrame {
 //                JOptionPane.showMessageDialog(null, "No hay ningún producto con ese nombre en la base de datos.",
 //                "No se encontró el elemento", JOptionPane.INFORMATION_MESSAGE);
                 txtBusqueda.grabFocus();
+                cc.desconectar();
             }
             
             while(rs.next())
@@ -127,6 +134,7 @@ public class HacerPedido extends javax.swing.JFrame {
                     model.addRow(productos);
                 }
                 tablaProductosRegistrados.setModel(model);
+                cc.desconectar();
             
         } catch (SQLException ex) {
             //Logger.getLogger(HacerPedido.class.getName()).log(Level.SEVERE, null, ex);
@@ -152,18 +160,38 @@ public class HacerPedido extends javax.swing.JFrame {
         model = new DefaultTableModel(null, titulos);
         
         Statement st;
+        
         try{
             st = cn.createStatement();
             ResultSet rs = st.executeQuery(sql);
             
+            //Reviso si hay algo en la lista de pedidos para activar/desactivar los botones.
+            if(rs.next())
+            {
+                btnNuevoPedido.setEnabled(true);
+                btnGeneraPDF.setEnabled(true);
+                btnImprimePedido.setEnabled(true);
+                //Para no perder el primer dato de la tabla.
+                rs.beforeFirst();
+            }
+            else
+            {
+                btnNuevoPedido.setEnabled(false);
+                btnGeneraPDF.setEnabled(false);
+                btnImprimePedido.setEnabled(false);
+            }
+            
+            
             while(rs.next())
                 {
+                    btnNuevoPedido.setEnabled(true);
                     pedidos[0] = rs.getString("cantidad");
                     pedidos[1] = rs.getString("nombre");
                     pedidos[2] = rs.getString("familia");
                     model.addRow(pedidos);
                 }
                 tablaPedidos.setModel(model);
+                cc.desconectar();
             
         } catch (SQLException ex) {
             //Logger.getLogger(HacerPedido.class.getName()).log(Level.SEVERE, null, ex);
@@ -180,11 +208,11 @@ public class HacerPedido extends javax.swing.JFrame {
         String producto = tablaProductosRegistrados.getValueAt(fila, 0).toString();
         String familia = tablaProductosRegistrados.getValueAt(fila, 1).toString();
         
-        String cant = JOptionPane.showInputDialog("Especifique la cantidad de productos a pedir:", "");
-        int cantidad = Integer.parseInt(cant);
-        
         String sql = "INSERT INTO pedido (nombre, familia, cantidad) VALUES (?,?,?)";
         try {
+            String cant = JOptionPane.showInputDialog("Especifique la cantidad de productos a pedir:", "");
+            int cantidad = Integer.parseInt(cant);
+            
             PreparedStatement pst = cn.prepareStatement(sql);
             pst.setString(1, producto);
             pst.setString(2, familia);
@@ -198,6 +226,7 @@ public class HacerPedido extends javax.swing.JFrame {
                     "Error al intentar agregar al pedido", JOptionPane.ERROR_MESSAGE);
             
         }
+        cc.desconectar();
     }
     
     //Elimina la lista actual de los pedidos.
@@ -213,6 +242,7 @@ public class HacerPedido extends javax.swing.JFrame {
             //Logger.getLogger(HacerPedido.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, ex);
         }
+        cc.desconectar();
     }
     
     //Verifica que no se dupliquen los productos en los pedidos.
@@ -236,6 +266,7 @@ public class HacerPedido extends javax.swing.JFrame {
         } catch (SQLException ex) {
             Logger.getLogger(HacerPedido.class.getName()).log(Level.SEVERE, null, ex);
         }
+        cc.desconectar();
     }
     
     public boolean listaPedidosVacia()
@@ -274,6 +305,37 @@ public class HacerPedido extends javax.swing.JFrame {
         return true;
     }
     
+    //Función alternativa para generar PDF de JTable.
+    private void print() {
+    Document document = new Document(PageSize.A4.rotate());
+    String username = System.getProperty("user.name");
+            
+            //String filepath = "/Users/alejandro/NetBeansProjects/QRGenerator/qrCode.png";
+            String filepath = "/Users/"+username+"/Desktop/jajasaludosss.pdf";
+    try {
+      PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(filepath));
+
+      document.open();
+      PdfContentByte cb = writer.getDirectContent();
+
+      cb.saveState();
+      Graphics2D g2 = cb.createGraphicsShapes(500, 500);
+
+      Shape oldClip = g2.getClip();
+      g2.clipRect(0, 0, 500, 500);
+
+      tablaPedidos.print(g2);
+      g2.setClip(oldClip);
+
+      g2.dispose();
+      cb.restoreState();
+    } catch (Exception e) {
+      System.err.println(e.getMessage());
+    }
+    document.close();
+  }
+    
+    //Función imprime JTable con los datos.
     public void printPedido()
     {
         Calendar cal = Calendar.getInstance();
@@ -296,8 +358,8 @@ public class HacerPedido extends javax.swing.JFrame {
         System.out.println("Abarrotes Huerta: "+dia+(mes+1)+año+"  "+hora);
         
         try {
-            MessageFormat headerFormat = new MessageFormat("Descripción de la consulta del paciente:\n");
-            MessageFormat footerFormat = new MessageFormat("CAPGRAS - FePro: " +dia+mes+año+"  "+hora);
+            MessageFormat headerFormat = new MessageFormat("Lista de pedidos de los productos:\n");
+            MessageFormat footerFormat = new MessageFormat("Abarrotes Huerta: " +dia+mes+año+"  "+hora);
             //tablaDatos.print(JTable.PrintMode.NORMAL, headerFormat, footerFormat);
             //tablaDatos.print(JTable.PrintMode.valueOf(lastid));
             tablaPedidos.print(JTable.PrintMode.NORMAL, headerFormat, footerFormat, rootPaneCheckingEnabled, null, rootPaneCheckingEnabled);
@@ -307,7 +369,7 @@ public class HacerPedido extends javax.swing.JFrame {
         }
     }
     
-    
+    //Función genera PDF de JTable.
     public void generatePDF(String nombreArchivo) throws DocumentException, FileNotFoundException, IOException
     { 
             Document document = new Document();
@@ -378,11 +440,12 @@ public class HacerPedido extends javax.swing.JFrame {
         };
         jButton1 = new javax.swing.JButton();
         btnPedido = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        btnNuevoPedido = new javax.swing.JButton();
         btnGeneraPDF = new javax.swing.JButton();
         btnImprimePedido = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        setIconImage(new ImageIcon(getClass().getResource("/views/store.png")).getImage());
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
@@ -428,7 +491,7 @@ public class HacerPedido extends javax.swing.JFrame {
             }
         });
 
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/busqueda/search.png"))); // NOI18N
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/busqueda/magnifying-glass.png"))); // NOI18N
 
         javax.swing.GroupLayout Busqueda_productoLayout = new javax.swing.GroupLayout(Busqueda_producto);
         Busqueda_producto.setLayout(Busqueda_productoLayout);
@@ -455,7 +518,7 @@ public class HacerPedido extends javax.swing.JFrame {
 
         jLabel3.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel3.setText("Productos registrados                Pedido a realizar");
+        jLabel3.setText("Asignación de productos a la lista de pedidos");
 
         javax.swing.GroupLayout Panel_listadoLayout = new javax.swing.GroupLayout(Panel_listado);
         Panel_listado.setLayout(Panel_listadoLayout);
@@ -488,6 +551,7 @@ public class HacerPedido extends javax.swing.JFrame {
 
             }
         ));
+        tablaPedidos.setSelectionBackground(new java.awt.Color(239, 108, 0));
         jScrollPane2.setViewportView(tablaPedidos);
 
         javax.swing.GroupLayout Panel_pedidoLayout = new javax.swing.GroupLayout(Panel_pedido);
@@ -496,20 +560,21 @@ public class HacerPedido extends javax.swing.JFrame {
             Panel_pedidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, Panel_pedidoLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 524, Short.MAX_VALUE)
                 .addContainerGap())
         );
         Panel_pedidoLayout.setVerticalGroup(
             Panel_pedidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, Panel_pedidoLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 314, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
         Panel_productos.setBackground(new java.awt.Color(255, 255, 255));
         Panel_productos.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(191, 54, 12), 2, true), "Productos registrados", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Lucida Grande", 0, 13), new java.awt.Color(191, 54, 12))); // NOI18N
 
+        tablaProductosRegistrados.setAutoCreateRowSorter(true);
         tablaProductosRegistrados.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {},
@@ -521,31 +586,33 @@ public class HacerPedido extends javax.swing.JFrame {
 
             }
         ));
+        tablaProductosRegistrados.setSelectionBackground(new java.awt.Color(239, 108, 0));
         jScrollPane1.setViewportView(tablaProductosRegistrados);
 
         javax.swing.GroupLayout Panel_productosLayout = new javax.swing.GroupLayout(Panel_productos);
         Panel_productos.setLayout(Panel_productosLayout);
         Panel_productosLayout.setHorizontalGroup(
             Panel_productosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 348, Short.MAX_VALUE)
+            .addGap(0, 399, Short.MAX_VALUE)
             .addGroup(Panel_productosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, Panel_productosLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 336, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 387, Short.MAX_VALUE)
                     .addContainerGap()))
         );
         Panel_productosLayout.setVerticalGroup(
             Panel_productosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 432, Short.MAX_VALUE)
+            .addGap(0, 0, Short.MAX_VALUE)
             .addGroup(Panel_productosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(Panel_productosLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 414, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 314, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/home/home (2).png"))); // NOI18N
         jButton1.setBorderPainted(false);
+        jButton1.setContentAreaFilled(false);
         jButton1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jButton1.setPressedIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/home/home (1).png"))); // NOI18N
         jButton1.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/home/home.png"))); // NOI18N
@@ -556,10 +623,11 @@ public class HacerPedido extends javax.swing.JFrame {
         });
 
         btnPedido.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
-        btnPedido.setForeground(new java.awt.Color(104, 159, 56));
-        btnPedido.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/greater/fast-forward.png"))); // NOI18N
+        btnPedido.setForeground(new java.awt.Color(85, 139, 47));
+        btnPedido.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/greater/cart.png"))); // NOI18N
         btnPedido.setText("Agregar");
         btnPedido.setBorderPainted(false);
+        btnPedido.setContentAreaFilled(false);
         btnPedido.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnPedido.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnPedido.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -569,17 +637,18 @@ public class HacerPedido extends javax.swing.JFrame {
             }
         });
 
-        jButton2.setFont(new java.awt.Font("Lucida Grande", 1, 11)); // NOI18N
-        jButton2.setForeground(new java.awt.Color(13, 71, 161));
-        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/refresh/refresh.png"))); // NOI18N
-        jButton2.setText("Nuevo pedido");
-        jButton2.setBorderPainted(false);
-        jButton2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jButton2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButton2.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        btnNuevoPedido.setFont(new java.awt.Font("Lucida Grande", 1, 11)); // NOI18N
+        btnNuevoPedido.setForeground(new java.awt.Color(13, 71, 161));
+        btnNuevoPedido.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/refresh/new-file.png"))); // NOI18N
+        btnNuevoPedido.setText("Nuevo pedido");
+        btnNuevoPedido.setBorderPainted(false);
+        btnNuevoPedido.setContentAreaFilled(false);
+        btnNuevoPedido.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnNuevoPedido.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnNuevoPedido.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnNuevoPedido.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                btnNuevoPedidoActionPerformed(evt);
             }
         });
 
@@ -588,6 +657,7 @@ public class HacerPedido extends javax.swing.JFrame {
         btnGeneraPDF.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/pdf/pdf.png"))); // NOI18N
         btnGeneraPDF.setText("Generar PDF");
         btnGeneraPDF.setBorderPainted(false);
+        btnGeneraPDF.setContentAreaFilled(false);
         btnGeneraPDF.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnGeneraPDF.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnGeneraPDF.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -598,10 +668,11 @@ public class HacerPedido extends javax.swing.JFrame {
         });
 
         btnImprimePedido.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
-        btnImprimePedido.setForeground(new java.awt.Color(97, 97, 97));
+        btnImprimePedido.setForeground(new java.awt.Color(66, 66, 66));
         btnImprimePedido.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/printer/printer.png"))); // NOI18N
         btnImprimePedido.setText("Imprimir pedido");
         btnImprimePedido.setBorderPainted(false);
+        btnImprimePedido.setContentAreaFilled(false);
         btnImprimePedido.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnImprimePedido.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnImprimePedido.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -616,30 +687,27 @@ public class HacerPedido extends javax.swing.JFrame {
         Panel_generalLayout.setHorizontalGroup(
             Panel_generalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(Panel_busqueda, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(Panel_listado, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(Panel_generalLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(Panel_generalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(Panel_generalLayout.createSequentialGroup()
                         .addComponent(Busqueda_producto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton2))
+                        .addComponent(btnNuevoPedido))
                     .addGroup(Panel_generalLayout.createSequentialGroup()
-                        .addGroup(Panel_generalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(Panel_generalLayout.createSequentialGroup()
-                                .addComponent(Panel_productos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(btnPedido, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jButton1))
+                        .addComponent(Panel_productos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addGroup(Panel_generalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(Panel_pedido, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(Panel_generalLayout.createSequentialGroup()
-                                .addGap(0, 168, Short.MAX_VALUE)
-                                .addComponent(btnImprimePedido)
-                                .addGap(18, 18, 18)
-                                .addComponent(btnGeneraPDF, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                        .addComponent(btnPedido, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(Panel_pedido, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(Panel_generalLayout.createSequentialGroup()
+                        .addComponent(jButton1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnImprimePedido)
+                        .addGap(19, 19, 19)
+                        .addComponent(btnGeneraPDF)))
                 .addContainerGap())
-            .addComponent(Panel_listado, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         Panel_generalLayout.setVerticalGroup(
             Panel_generalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -648,28 +716,24 @@ public class HacerPedido extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(Panel_generalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(Busqueda_producto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2))
+                    .addComponent(btnNuevoPedido))
                 .addGap(18, 18, 18)
                 .addComponent(Panel_listado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
                 .addGroup(Panel_generalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(Panel_generalLayout.createSequentialGroup()
-                        .addGap(196, 196, 196)
-                        .addComponent(btnPedido))
-                    .addGroup(Panel_generalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(Panel_productos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(Panel_pedido, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addGroup(Panel_generalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(Panel_generalLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton1)
-                        .addContainerGap())
                     .addGroup(Panel_generalLayout.createSequentialGroup()
                         .addGap(18, 18, 18)
-                        .addGroup(Panel_generalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnGeneraPDF)
-                            .addComponent(btnImprimePedido))
-                        .addContainerGap(7, Short.MAX_VALUE))))
+                        .addGroup(Panel_generalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(Panel_productos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(Panel_pedido, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(Panel_generalLayout.createSequentialGroup()
+                        .addGap(157, 157, 157)
+                        .addComponent(btnPedido)))
+                .addGap(18, 18, 18)
+                .addGroup(Panel_generalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton1)
+                    .addComponent(btnGeneraPDF)
+                    .addComponent(btnImprimePedido))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -690,6 +754,7 @@ public class HacerPedido extends javax.swing.JFrame {
         // TODO add your handling code here:
         new Principal().setVisible(true);
         this.dispose();
+        cc.desconectar();
     }//GEN-LAST:event_formWindowClosing
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -713,22 +778,53 @@ public class HacerPedido extends javax.swing.JFrame {
         mostrarPedidos();
     }//GEN-LAST:event_btnPedidoActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void btnNuevoPedidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoPedidoActionPerformed
         // TODO add your handling code here:
         nuevoPedido();
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_btnNuevoPedidoActionPerformed
 
     private void btnGeneraPDFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGeneraPDFActionPerformed
         // TODO add your handling code here:
-        String nombreArvhivo = JOptionPane.showInputDialog("Ingrese nombre del archivo (sin especificar formato o extensión):", "Nombre del archivo");
-        
+//        String nombreArvhivo = JOptionPane.showInputDialog("Ingrese nombre del archivo (sin especificar formato o extensión):", "Nombre del archivo");
+//        
+//        try {
+//            generatePDF(nombreArvhivo);
+//        } catch (FileNotFoundException ex) {
+//            Logger.getLogger(HacerPedido.class.getName()).log(Level.SEVERE, null, ex);
+//        } catch (DocumentException ex) {
+//            Logger.getLogger(HacerPedido.class.getName()).log(Level.SEVERE, null, ex);
+//        } catch (IOException ex) {
+//            Logger.getLogger(HacerPedido.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        print();
+
+        String username = System.getProperty("user.name");
+            
+        //String filepath = "/Users/alejandro/NetBeansProjects/QRGenerator/qrCode.png";
+        String filepath = "/Users/"+username+"/Desktop/jajasaludosss.pdf";
+
         try {
-            generatePDF(nombreArvhivo);
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(HacerPedido.class.getName()).log(Level.SEVERE, null, ex);
+            Document doc = new Document();
+            PdfWriter.getInstance(doc, new FileOutputStream(filepath));
+            doc.open();
+            PdfPTable pdfTable = new PdfPTable(tablaPedidos.getColumnCount());
+            //adding table headers
+            for (int i = 0; i < tablaPedidos.getColumnCount(); i++) {
+                pdfTable.addCell(tablaPedidos.getColumnName(i));
+            }
+            //extracting data from the JTable and inserting it to PdfPTable
+            for (int rows = 0; rows < tablaPedidos.getRowCount() - 1; rows++) {
+                for (int cols = 0; cols < tablaPedidos.getColumnCount(); cols++) {
+                    pdfTable.addCell(tablaPedidos.getModel().getValueAt(rows, cols).toString());
+
+                }
+            }
+            doc.add(pdfTable);
+            doc.close();
+            System.out.println("done");
         } catch (DocumentException ex) {
             Logger.getLogger(HacerPedido.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
+        } catch (FileNotFoundException ex) {
             Logger.getLogger(HacerPedido.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btnGeneraPDFActionPerformed
@@ -782,9 +878,9 @@ public class HacerPedido extends javax.swing.JFrame {
     private javax.swing.JPanel Panel_productos;
     private javax.swing.JButton btnGeneraPDF;
     private javax.swing.JButton btnImprimePedido;
+    private javax.swing.JButton btnNuevoPedido;
     private javax.swing.JButton btnPedido;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel8;
