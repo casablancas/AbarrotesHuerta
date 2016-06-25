@@ -28,21 +28,43 @@ import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfTemplate;
 import com.lowagie.text.pdf.PdfWriter;
+import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.Toolkit;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.dnd.DragSource;
+import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Vector;
+import javax.activation.ActivationDataFlavor;
+import javax.activation.DataHandler;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.ActionMap;
+import javax.swing.DropMode;
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.ListSelectionModel;
+import javax.swing.TransferHandler;
 
 /**
  *
  * @author alejandro
  */
 public class HacerPedido extends javax.swing.JFrame {
+    
+    private final TransferHandler handler = new TableRowTransferHandler();
 
     /**
      * Creates new form HacerPedido
@@ -56,6 +78,28 @@ public class HacerPedido extends javax.swing.JFrame {
         mostrarProductos("");
         mostrarPedidos();
         tablaProductosRegistrados.setEditingRow(ERROR);
+        toolTips();
+        
+//        tablaProductosRegistrados.getSelectionModel().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+//        tablaProductosRegistrados.setTransferHandler(handler);
+//        tablaPedidos.setDropMode(DropMode.INSERT_ROWS);
+//        tablaProductosRegistrados.setDragEnabled(true);
+//        tablaPedidos.setFillsViewportHeight(true);
+
+        tablaProductosRegistrados.getSelectionModel().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        tablaProductosRegistrados.setDragEnabled(true);
+        tablaPedidos.setDropMode(DropMode.INSERT_ROWS);
+        tablaPedidos.setTransferHandler(new TS());
+        
+        //Disable row Cut, Copy, Paste
+//        ActionMap map = tablaProductosRegistrados.getActionMap();
+//        Action dummy = new AbstractAction() {
+//            @Override public void actionPerformed(ActionEvent e) { /* Dummy action */ }
+//        };
+//        map.put(TransferHandler.getCutAction().getValue(Action.NAME),   dummy);
+//        map.put(TransferHandler.getCopyAction().getValue(Action.NAME),  dummy);
+//        map.put(TransferHandler.getPasteAction().getValue(Action.NAME), dummy);
+        
         //btnNuevoPedido.setEnabled(false);
         
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -66,12 +110,22 @@ public class HacerPedido extends javax.swing.JFrame {
         });
     }
     
+    public void toolTips()
+    {
+        btnPedido.setToolTipText("Elija un ítem de la lista de productos registrados y despúes de click en este botón para agregarlo a lista de pedidos.");
+        txtBusqueda.setToolTipText("Introduzca los caracteres a buscar.");
+        btnHome.setToolTipText("Regresar al Menú Principal.");
+        btnGeneraPDF.setToolTipText("Presione para generar un documento PDF.");
+        btnImprimePedido.setToolTipText("Presione para impresión rápida del pedido.");
+        btnNuevoPedido.setToolTipText("Crear un nuevo pedido (se eliminarán los datos del pedido actual).");
+    }
+    
     public void nuevoPedido(){
         
         //Si la lista de pedidos contiene algo.
         if(!listaPedidosVacia())
         {
-            if (JOptionPane.showConfirmDialog(rootPane, "¿Desea crear un nuevo pedido? Los datos contenidos en el pedido actual serán eliminados.",
+            if (JOptionPane.showConfirmDialog(rootPane, "¿Desea crear un nuevo pedido?\nLos datos contenidos en el pedido actual serán eliminados.",
                     "Nuevo pedido.", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
             {
                 eliminarColaPedidos();
@@ -407,6 +461,39 @@ public class HacerPedido extends javax.swing.JFrame {
             // step 5: we close the document
             document.close();
     }
+    
+    public void generaPDFconBordes(String nombreArchivo)
+    {
+        String username = System.getProperty("user.name");
+            
+        //String filepath = "/Users/alejandro/NetBeansProjects/QRGenerator/qrCode.png";
+        String filepath = "/Users/"+username+"/Desktop/"+nombreArchivo+".pdf";
+
+        try {
+            Document doc = new Document();
+            PdfWriter.getInstance(doc, new FileOutputStream(filepath));
+            doc.open();
+            PdfPTable pdfTable = new PdfPTable(tablaPedidos.getColumnCount());
+            //adding table headers
+            for (int i = 0; i < tablaPedidos.getColumnCount(); i++) {
+                pdfTable.addCell(tablaPedidos.getColumnName(i));
+            }
+            //extracting data from the JTable and inserting it to PdfPTable
+            for (int rows = 0; rows < tablaPedidos.getRowCount() - 1; rows++) {
+                for (int cols = 0; cols < tablaPedidos.getColumnCount(); cols++) {
+                    pdfTable.addCell(tablaPedidos.getModel().getValueAt(rows, cols).toString());
+
+                }
+            }
+            doc.add(pdfTable);
+            doc.close();
+            System.out.println("done");
+        } catch (DocumentException ex) {
+            Logger.getLogger(HacerPedido.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(HacerPedido.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -438,7 +525,7 @@ public class HacerPedido extends javax.swing.JFrame {
 
             }
         };
-        jButton1 = new javax.swing.JButton();
+        btnHome = new javax.swing.JButton();
         btnPedido = new javax.swing.JButton();
         btnNuevoPedido = new javax.swing.JButton();
         btnGeneraPDF = new javax.swing.JButton();
@@ -491,7 +578,7 @@ public class HacerPedido extends javax.swing.JFrame {
             }
         });
 
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/busqueda/magnifying-glass.png"))); // NOI18N
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/busqueda/research.png"))); // NOI18N
 
         javax.swing.GroupLayout Busqueda_productoLayout = new javax.swing.GroupLayout(Busqueda_producto);
         Busqueda_producto.setLayout(Busqueda_productoLayout);
@@ -538,7 +625,7 @@ public class HacerPedido extends javax.swing.JFrame {
         );
 
         Panel_pedido.setBackground(new java.awt.Color(255, 255, 255));
-        Panel_pedido.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(191, 54, 12), 2, true), "Pedido de productos", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Lucida Grande", 0, 13), new java.awt.Color(191, 54, 12))); // NOI18N
+        Panel_pedido.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(191, 54, 12), 2, true), "Lista de pedidos", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Lucida Grande", 0, 13), new java.awt.Color(191, 54, 12))); // NOI18N
 
         tablaPedidos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -610,15 +697,13 @@ public class HacerPedido extends javax.swing.JFrame {
                     .addContainerGap()))
         );
 
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/home/home (2).png"))); // NOI18N
-        jButton1.setBorderPainted(false);
-        jButton1.setContentAreaFilled(false);
-        jButton1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jButton1.setPressedIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/home/home (1).png"))); // NOI18N
-        jButton1.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/home/home.png"))); // NOI18N
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnHome.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/home/cabin.png"))); // NOI18N
+        btnHome.setBorderPainted(false);
+        btnHome.setContentAreaFilled(false);
+        btnHome.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnHome.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnHomeActionPerformed(evt);
             }
         });
 
@@ -702,7 +787,7 @@ public class HacerPedido extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(Panel_pedido, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(Panel_generalLayout.createSequentialGroup()
-                        .addComponent(jButton1)
+                        .addComponent(btnHome)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnImprimePedido)
                         .addGap(19, 19, 19)
@@ -730,7 +815,7 @@ public class HacerPedido extends javax.swing.JFrame {
                         .addComponent(btnPedido)))
                 .addGap(18, 18, 18)
                 .addGroup(Panel_generalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton1)
+                    .addComponent(btnHome)
                     .addComponent(btnGeneraPDF)
                     .addComponent(btnImprimePedido))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -757,11 +842,11 @@ public class HacerPedido extends javax.swing.JFrame {
         cc.desconectar();
     }//GEN-LAST:event_formWindowClosing
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btnHomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHomeActionPerformed
         // TODO add your handling code here:
         new Principal().setVisible(true);
         this.dispose();
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_btnHomeActionPerformed
 
     private void txtBusquedaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBusquedaActionPerformed
         // TODO add your handling code here:
@@ -785,48 +870,23 @@ public class HacerPedido extends javax.swing.JFrame {
 
     private void btnGeneraPDFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGeneraPDFActionPerformed
         // TODO add your handling code here:
-//        String nombreArvhivo = JOptionPane.showInputDialog("Ingrese nombre del archivo (sin especificar formato o extensión):", "Nombre del archivo");
-//        
-//        try {
-//            generatePDF(nombreArvhivo);
-//        } catch (FileNotFoundException ex) {
-//            Logger.getLogger(HacerPedido.class.getName()).log(Level.SEVERE, null, ex);
-//        } catch (DocumentException ex) {
-//            Logger.getLogger(HacerPedido.class.getName()).log(Level.SEVERE, null, ex);
-//        } catch (IOException ex) {
-//            Logger.getLogger(HacerPedido.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//        print();
-
-        String username = System.getProperty("user.name");
-            
-        //String filepath = "/Users/alejandro/NetBeansProjects/QRGenerator/qrCode.png";
-        String filepath = "/Users/"+username+"/Desktop/jajasaludosss.pdf";
-
+        
+        String nombreArvhivo = JOptionPane.showInputDialog("Ingrese nombre del archivo (sin especificar formato o extensión):", "Nombre del archivo");
+        
         try {
-            Document doc = new Document();
-            PdfWriter.getInstance(doc, new FileOutputStream(filepath));
-            doc.open();
-            PdfPTable pdfTable = new PdfPTable(tablaPedidos.getColumnCount());
-            //adding table headers
-            for (int i = 0; i < tablaPedidos.getColumnCount(); i++) {
-                pdfTable.addCell(tablaPedidos.getColumnName(i));
-            }
-            //extracting data from the JTable and inserting it to PdfPTable
-            for (int rows = 0; rows < tablaPedidos.getRowCount() - 1; rows++) {
-                for (int cols = 0; cols < tablaPedidos.getColumnCount(); cols++) {
-                    pdfTable.addCell(tablaPedidos.getModel().getValueAt(rows, cols).toString());
-
-                }
-            }
-            doc.add(pdfTable);
-            doc.close();
-            System.out.println("done");
-        } catch (DocumentException ex) {
-            Logger.getLogger(HacerPedido.class.getName()).log(Level.SEVERE, null, ex);
+            generatePDF(nombreArvhivo);
         } catch (FileNotFoundException ex) {
             Logger.getLogger(HacerPedido.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (DocumentException ex) {
+            Logger.getLogger(HacerPedido.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(HacerPedido.class.getName()).log(Level.SEVERE, null, ex);
         }
+
+
+//        print();
+
+        
     }//GEN-LAST:event_btnGeneraPDFActionPerformed
 
     private void btnImprimePedidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImprimePedidoActionPerformed
@@ -834,6 +894,145 @@ public class HacerPedido extends javax.swing.JFrame {
         printPedido();
     }//GEN-LAST:event_btnImprimePedidoActionPerformed
 
+    
+    class TableRowTransferHandler extends TransferHandler {
+    private final DataFlavor localObjectFlavor;
+    private int[] indices;
+    private int addIndex = -1; //Location where items were added
+    private int addCount; //Number of items added.
+    private JComponent source;
+
+    protected TableRowTransferHandler() {
+        super();
+        localObjectFlavor = new ActivationDataFlavor(Object[].class, DataFlavor.javaJVMLocalObjectMimeType, "Array of items");
+    }
+    @Override protected Transferable createTransferable(JComponent c) {
+        source = c;
+        JTable table = (JTable) c;
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        List<Object> list = new ArrayList<>();
+        indices = table.getSelectedRows();
+        for (int i: indices) {
+            list.add(model.getDataVector().get(i));
+        }
+        Object[] transferedObjects = list.toArray();
+        return new DataHandler(transferedObjects, localObjectFlavor.getMimeType());
+    }
+    @Override public boolean canImport(TransferHandler.TransferSupport info) {
+        JTable table = (JTable) info.getComponent();
+        boolean isDropable = info.isDrop() && info.isDataFlavorSupported(localObjectFlavor);
+        //XXX bug?
+        table.setCursor(isDropable ? DragSource.DefaultMoveDrop : DragSource.DefaultMoveNoDrop);
+        return isDropable;
+    }
+    @Override public int getSourceActions(JComponent c) {
+        return TransferHandler.MOVE; //TransferHandler.COPY_OR_MOVE;
+    }
+    @Override public boolean importData(TransferHandler.TransferSupport info) {
+        if (!canImport(info)) {
+            return false;
+        }
+        TransferHandler.DropLocation tdl = info.getDropLocation();
+        if (!(tdl instanceof JTable.DropLocation)) {
+            return false;
+        }
+        JTable.DropLocation dl = (JTable.DropLocation) tdl;
+        JTable tablaPedidos = (JTable) info.getComponent();
+        DefaultTableModel model = (DefaultTableModel) tablaPedidos.getModel();
+        int index = dl.getRow();
+        //boolean insert = dl.isInsert();
+        int max = model.getRowCount();
+        if (index < 0 || index > max) {
+            index = max;
+        }
+        addIndex = index;
+        tablaPedidos.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        try {
+            Object[] values = (Object[]) info.getTransferable().getTransferData(localObjectFlavor);
+            if (Objects.equals(source, tablaPedidos)) {
+                addCount = values.length;
+            }
+            for (int i = 0; i < values.length; i++) {
+                int idx = index++;
+                model.insertRow(idx, (Vector) values[i]);
+                tablaPedidos.getSelectionModel().addSelectionInterval(idx, idx);
+            }
+            return true;
+        } catch (UnsupportedFlavorException | IOException ex) {
+            ex.printStackTrace();
+        }
+        return false;
+    }
+    @Override protected void exportDone(JComponent c, Transferable data, int action) {
+        cleanup(c, action == TransferHandler.MOVE);
+    }
+    private void cleanup(JComponent c, boolean remove) {
+        if (remove && indices != null) {
+            c.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            DefaultTableModel model = (DefaultTableModel) ((JTable) c).getModel();
+            if (addCount > 0) {
+                for (int i = 0; i < indices.length; i++) {
+                    if (indices[i] >= addIndex) {
+                        indices[i] += addCount;
+                    }
+                }
+            }
+            for (int i = indices.length - 1; i >= 0; i--) {
+                model.removeRow(indices[i]);
+            }
+        }
+        indices  = null;
+        addCount = 0;
+        addIndex = -1;
+    }
+}
+    
+    
+
+class TS extends TransferHandler {
+
+    public TS() {
+    }
+
+    @Override
+    public int getSourceActions(JComponent c) {
+        return MOVE;
+    }
+
+    @Override
+    protected Transferable createTransferable(JComponent source) {
+
+        return new StringSelection((String) ((JTable) tablaProductosRegistrados).getModel().getValueAt(((JTable) tablaProductosRegistrados).getSelectedRow(), ((JTable) tablaProductosRegistrados).getSelectedColumn()));
+    }
+
+    @Override
+    protected void exportDone(JComponent source, Transferable data, int action) {
+
+        ((JTable) tablaProductosRegistrados).getModel().setValueAt("", ((JTable) tablaProductosRegistrados).getSelectedRow(), ((JTable) tablaProductosRegistrados).getSelectedColumn());
+
+    }
+
+    @Override
+    public boolean canImport(TransferSupport support) {
+        return true;
+    }
+
+    @Override
+    public boolean importData(TransferSupport support) {
+//        JTable tablaPedidos = (JTable) support.getComponent();
+        tablaPedidos = (JTable) support.getComponent();
+        try {
+            tablaPedidos.setValueAt(support.getTransferable().getTransferData(DataFlavor.stringFlavor), tablaPedidos.getSelectedRow(), tablaPedidos.getSelectedColumn());
+        } catch (UnsupportedFlavorException ex) {
+            Logger.getLogger(TS.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(TS.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return super.importData(support);
+    }
+}
+    
+    
     /**
      * @param args the command line arguments
      */
@@ -877,10 +1076,10 @@ public class HacerPedido extends javax.swing.JFrame {
     private javax.swing.JPanel Panel_pedido;
     private javax.swing.JPanel Panel_productos;
     private javax.swing.JButton btnGeneraPDF;
+    private javax.swing.JButton btnHome;
     private javax.swing.JButton btnImprimePedido;
     private javax.swing.JButton btnNuevoPedido;
     private javax.swing.JButton btnPedido;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel8;

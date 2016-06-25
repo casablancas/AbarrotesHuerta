@@ -34,11 +34,19 @@ public class AgregarProducto extends javax.swing.JFrame {
         txtProducto.grabFocus();
         optFam1.setSelected(true);
         btnAgregarProducto.setEnabled(false);
+        toolTips();
     }
     
     //Creamos la instancia 'con' de tipo ConexionBD
         ConexionBD cc = new ConexionBD();
         Connection cn = cc.conectar();
+        
+    public void toolTips()
+    {
+        txtProducto.setToolTipText("Introduzca el nombre del producto.");
+        btnAgregarProducto.setToolTipText("Presione para guardar cambios.");
+        btnHome.setToolTipText("Regresar al Menú Principal.");
+    }
     
     
     public void agregarProducto()
@@ -137,7 +145,7 @@ public class AgregarProducto extends javax.swing.JFrame {
         btnAgregarProducto = new javax.swing.JButton();
         jPanel6 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        btnHome = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setIconImage(new ImageIcon(getClass().getResource("/views/store.png")).getImage());
@@ -157,6 +165,9 @@ public class AgregarProducto extends javax.swing.JFrame {
         jLabel1.setText("Nombre producto:");
 
         txtProducto.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtProductoKeyTyped(evt);
+            }
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtProductoKeyReleased(evt);
             }
@@ -310,15 +321,13 @@ public class AgregarProducto extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/home/home (2).png"))); // NOI18N
-        jButton1.setBorderPainted(false);
-        jButton1.setContentAreaFilled(false);
-        jButton1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jButton1.setPressedIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/home/home (1).png"))); // NOI18N
-        jButton1.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/home/home.png"))); // NOI18N
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnHome.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/home/cabin.png"))); // NOI18N
+        btnHome.setBorderPainted(false);
+        btnHome.setContentAreaFilled(false);
+        btnHome.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnHome.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnHomeActionPerformed(evt);
             }
         });
 
@@ -331,7 +340,7 @@ public class AgregarProducto extends javax.swing.JFrame {
                 .addGroup(Panel_generalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(Ingreso_datos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(Panel_generalLayout.createSequentialGroup()
-                        .addComponent(jButton1)
+                        .addComponent(btnHome)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
             .addComponent(jPanel6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -343,7 +352,7 @@ public class AgregarProducto extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(Ingreso_datos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1)
+                .addComponent(btnHome)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -386,11 +395,11 @@ public class AgregarProducto extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_optFam2ActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btnHomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHomeActionPerformed
         // TODO add your handling code here:
         new Principal().setVisible(true);
         this.dispose();
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_btnHomeActionPerformed
 
     private void btnAgregarProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarProductoActionPerformed
         // TODO add your handling code here:
@@ -408,6 +417,19 @@ public class AgregarProducto extends javax.swing.JFrame {
         // TODO add your handling code here:
         activaBoton();
     }//GEN-LAST:event_txtProductoKeyReleased
+
+    private void txtProductoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtProductoKeyTyped
+        // TODO add your handling code here:
+        char c = evt.getKeyChar(); 
+        
+        if(Character.isDigit(c) || Character.isLetter(c))
+        {
+            btnAgregarProducto.setEnabled(true);
+            getToolkit().beep();
+        }
+        else
+            btnAgregarProducto.setEnabled(false);
+    }//GEN-LAST:event_txtProductoKeyTyped
 
     /**
      * @param args the command line arguments
@@ -449,8 +471,8 @@ public class AgregarProducto extends javax.swing.JFrame {
     private javax.swing.JPanel Ingreso_datos;
     private javax.swing.JPanel Panel_general;
     private javax.swing.JButton btnAgregarProducto;
+    private javax.swing.JButton btnHome;
     private javax.swing.ButtonGroup buttonGroupFamilias;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel5;

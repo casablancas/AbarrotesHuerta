@@ -19,6 +19,7 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 /**
  *
@@ -56,7 +57,8 @@ public class Principal extends javax.swing.JFrame {
         
         this.setTitle("Menú pricipal");
         this.setLocationRelativeTo(null);
-        this.setResizable(false);
+//        this.setResizable(false);
+        toolTips();
         
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
  
@@ -72,6 +74,12 @@ public class Principal extends javax.swing.JFrame {
         if (JOptionPane.showConfirmDialog(rootPane, "¿Realmente desea salir del sistema?",
                 "Salir del sistema.", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
             System.exit(0);
+    }
+    
+    public void toolTips()
+    {
+        btnAgregarProducto.setToolTipText("Agregue un nuevo producto a la base de datos.");
+        btnHacerPedido.setToolTipText("Mire la lista de productos y elíjalos para crear una lista de pedidos.");
     }
 
     /**
@@ -89,6 +97,10 @@ public class Principal extends javax.swing.JFrame {
         btnHacerPedido = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenu1 = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
+        jMenu2 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
@@ -154,7 +166,7 @@ public class Principal extends javax.swing.JFrame {
 
         jPanel3.setBackground(new java.awt.Color(191, 54, 12));
 
-        jLabel1.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("ABARROTES HUERTA");
         jLabel1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -163,17 +175,17 @@ public class Principal extends javax.swing.JFrame {
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(99, 99, 99)
                 .addComponent(jLabel1)
-                .addGap(120, 120, 120))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
-                .addContainerGap(33, Short.MAX_VALUE))
+                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 44, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -194,6 +206,24 @@ public class Principal extends javax.swing.JFrame {
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        jMenu1.setText("Archivo");
+
+        jMenuItem1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/db/db.png"))); // NOI18N
+        jMenuItem1.setText("Exportar BD/Importar BD");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem1);
+
+        jMenuBar1.add(jMenu1);
+
+        jMenu2.setText("Edit");
+        jMenuBar1.add(jMenu2);
+
+        setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -221,10 +251,36 @@ public class Principal extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_btnHacerPedidoActionPerformed
 
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        // TODO add your handling code here:
+        new ExportRestore().setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
+        
+        //Para agregar la barra de Menú nativa de MacOSX
+//        try {
+//                System.setProperty("apple.laf.useScreenMenuBar", "true");
+//                System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Test");
+//                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+//        }
+//        catch(ClassNotFoundException e) {
+//                System.out.println("ClassNotFoundException: " + e.getMessage());
+//        }
+//        catch(InstantiationException e) {
+//                System.out.println("InstantiationException: " + e.getMessage());
+//        }
+//        catch(IllegalAccessException e) {
+//                System.out.println("IllegalAccessException: " + e.getMessage());
+//        }
+//        catch(UnsupportedLookAndFeelException e) {
+//                System.out.println("UnsupportedLookAndFeelException: " + e.getMessage());
+//        }
+        
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -260,6 +316,10 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JButton btnAgregarProducto;
     private javax.swing.JButton btnHacerPedido;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
