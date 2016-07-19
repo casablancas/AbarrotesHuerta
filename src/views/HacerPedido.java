@@ -43,6 +43,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -57,6 +58,15 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.ListSelectionModel;
 import javax.swing.TransferHandler;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRExporter;
+import net.sf.jasperreports.engine.JRExporterParameter;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.export.JRPdfExporter;
+import net.sf.jasperreports.engine.util.JRLoader;
+import net.sf.jasperreports.view.JasperViewer;
 
 /**
  *
@@ -79,6 +89,7 @@ public class HacerPedido extends javax.swing.JFrame {
         mostrarPedidos();
         tablaProductosRegistrados.setEditingRow(ERROR);
         toolTips();
+//        jButton1.setVisible(false);
         
 //        tablaProductosRegistrados.getSelectionModel().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 //        tablaProductosRegistrados.setTransferHandler(handler);
@@ -530,6 +541,7 @@ public class HacerPedido extends javax.swing.JFrame {
         btnNuevoPedido = new javax.swing.JButton();
         btnGeneraPDF = new javax.swing.JButton();
         btnImprimePedido = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setIconImage(new ImageIcon(getClass().getResource("/views/store.png")).getImage());
@@ -697,7 +709,7 @@ public class HacerPedido extends javax.swing.JFrame {
                     .addContainerGap()))
         );
 
-        btnHome.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/home/cabin.png"))); // NOI18N
+        btnHome.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/home/store (2).png"))); // NOI18N
         btnHome.setBorderPainted(false);
         btnHome.setContentAreaFilled(false);
         btnHome.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -767,6 +779,13 @@ public class HacerPedido extends javax.swing.JFrame {
             }
         });
 
+        jButton1.setText("jButton1");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout Panel_generalLayout = new javax.swing.GroupLayout(Panel_general);
         Panel_general.setLayout(Panel_generalLayout);
         Panel_generalLayout.setHorizontalGroup(
@@ -789,6 +808,8 @@ public class HacerPedido extends javax.swing.JFrame {
                     .addGroup(Panel_generalLayout.createSequentialGroup()
                         .addComponent(btnHome)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton1)
+                        .addGap(18, 18, 18)
                         .addComponent(btnImprimePedido)
                         .addGap(19, 19, 19)
                         .addComponent(btnGeneraPDF)))
@@ -817,7 +838,8 @@ public class HacerPedido extends javax.swing.JFrame {
                 .addGroup(Panel_generalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnHome)
                     .addComponent(btnGeneraPDF)
-                    .addComponent(btnImprimePedido))
+                    .addComponent(btnImprimePedido)
+                    .addComponent(jButton1))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -893,6 +915,49 @@ public class HacerPedido extends javax.swing.JFrame {
         // TODO add your handling code here:
         printPedido();
     }//GEN-LAST:event_btnImprimePedidoActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        ///Users/alejandro/NetBeansProjects/Abarrotera-Huerta/src/reports
+        
+        String username = System.getProperty("user.name");
+        
+        //Obtenemos el path absoluto del archivo .jasper en la PC
+        String filepath = "/Users/"+username+"/Desktop/report1.jasper";
+        
+        //Obtenemos el path relativo del archivo .jasper de las carpetas del JAR
+        File resPath = new File(getClass().getResource("/reports/report1.jasper").getFile());
+        
+        String pathJasper = "Users/alejandro/NetBeansProjects/Abarrotera-Huerta/src/reports/report1.jasper";
+        JasperReport jr = null;
+        try {
+            jr = (JasperReport) JRLoader.loadObjectFromFile(resPath.toString());
+            JasperPrint jp = JasperFillManager.fillReport(jr, null, cc.conectar());
+            JasperViewer jv = new JasperViewer(jp, false);
+            jv.setVisible(true);
+            jv.setTitle("Pedidos actuales");
+            cc.desconectar();
+        } catch (JRException ex) {
+            Logger.getLogger(HacerPedido.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+
+//        JasperReport reporte;
+//        try {
+//            String username = System.getProperty("user.name");
+//////            
+//            String filepath = "/Users/"+username+"/Desktop/report1.jasper";
+//            reporte = (JasperReport) JRLoader.loadObject(filepath);
+//            JasperPrint jasperPrint = JasperFillManager.fillReport(reporte, null, cc.conectar());
+//            JRExporter exporter = new JRPdfExporter();
+//            exporter.setParameter(JRExporterParameter.JASPER_PRINT,jasperPrint); 
+//            exporter.setParameter(JRExporterParameter.OUTPUT_FILE,new java.io.File("Users/alejandro/NetBeansProjects/Abarrotera-Huerta/src/reports/reportePDF.pdf"));
+//            exporter.exportReport();
+//        } catch (JRException ex) {
+//            Logger.getLogger(HacerPedido.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     
     class TableRowTransferHandler extends TransferHandler {
@@ -1080,6 +1145,7 @@ class TS extends TransferHandler {
     private javax.swing.JButton btnImprimePedido;
     private javax.swing.JButton btnNuevoPedido;
     private javax.swing.JButton btnPedido;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel8;

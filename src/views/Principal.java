@@ -81,6 +81,11 @@ public class Principal extends javax.swing.JFrame {
         btnAgregarProducto.setToolTipText("Agregue un nuevo producto a la base de datos.");
         btnHacerPedido.setToolTipText("Mire la lista de productos y elíjalos para crear una lista de pedidos.");
     }
+    
+//    public void progressBar()
+//    {
+//        jProgressBar1.setIndeterminate(true);
+//    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -247,6 +252,7 @@ public class Principal extends javax.swing.JFrame {
 
     private void btnHacerPedidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHacerPedidoActionPerformed
         // TODO add your handling code here:
+//        progressBar();
         new HacerPedido().setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnHacerPedidoActionPerformed

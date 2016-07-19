@@ -15,6 +15,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -44,6 +45,7 @@ public class ExportRestore extends javax.swing.JFrame {
     {
         btnExport2.setToolTipText("Exporte la base de datos actual.");
         btnImport.setToolTipText("Eliga una base de datos para importar.");
+        btnHome.setToolTipText("Regresar al Menú Principal.");
     }
     
     private static void backup() {
@@ -196,32 +198,49 @@ public class ExportRestore extends javax.swing.JFrame {
     
     
     private void exportDB() {
+        
         String nombre="";
         JFileChooser file=new JFileChooser();
         file.setDialogTitle("Elija nombre de archivo para exportar la base de datos");
-        file.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        file.setFileSelectionMode(JFileChooser.APPROVE_OPTION);
         FileNameExtensionFilter filtro = new FileNameExtensionFilter("*.SQL", "sql");
         file.setFileFilter(filtro);
         file.showSaveDialog(this);
         File guarda = file.getSelectedFile();
         String pathArchivo = file.getSelectedFile().getPath();
-        String nombreArchivo = (file.getSelectedFile().getName())+".sql";
-        String nombreArchivo1 = nombreArchivo;
-        System.out.println("1: "+pathArchivo+" "+nombreArchivo+" "+nombreArchivo1);
+//        String nombreArchivo = (file.getSelectedFile().getName())+".sql";
+//        System.out.println("1: "+pathArchivo+" "+nombreArchivo);
         Process p = null;
+        
+        String host = "";
+        String user = "root";
+        String pass = "";
+        String db = "abarrotera";
+        
+        String executeCmd = "/Applications/XAMPP/xamppfiles/bin/mysqldump -u" + user +  " --add-drop-database -B " + db + " -r " + pathArchivo+".sql";
+        
         try {
             Runtime runtime = Runtime.getRuntime();
-            p = runtime.exec("/Applications/XAMPP/xamppfiles/bin/mysqldump -h db4free.net -uoswaldo -poswaldohuerta --add-drop-database -B abarrotera -r " + pathArchivo+".sql");
-            System.out.println("2: "+pathArchivo+" "+nombreArchivo+" "+nombreArchivo1);
-            //change the dbpass and dbname with your dbpass and dbname
+            //Exportación de BD mysql remota en db4free
+//            p = runtime.exec("/Applications/XAMPP/xamppfiles/bin/mysqldump -h db4free.net -uoswaldo -poswaldohuerta --add-drop-database -B abarrotera -r " + pathArchivo+".sql");
+            //FALTA SEGUIR MODIFICANDO PARA QUE FUNCIONE -.-
+//            p = runtime.exec("/Applications/XAMPP/xamppfiles/bin/mysqldump -h localhost -uroot --add-drop-database -B abarrotera -r " + pathArchivo+".sql");
+//            p = runtime.exec("/Applications/XAMPP/xamppfiles/bin/mysqldump abarrotera -h localhost -uroot -p "+pathArchivo+".sql");
+            p = runtime.exec(executeCmd);
+//            System.out.println("2: "+pathArchivo+" "+nombreArchivo+" "+nombreArchivo1);
+
             int processComplete = p.waitFor();
             
             if (processComplete == 0) {
                 
-                System.out.println("Backup created successfully!");
+//                System.out.println("Backup created successfully!");
+                JOptionPane.showMessageDialog(null, "¡Se ha exportado la base de datos exitosamente!",
+                "Exportación exitosa", JOptionPane.INFORMATION_MESSAGE);
                 
             } else {
-                System.out.println("Could not create the backup");
+//                System.out.println("Could not create the backup");
+                JOptionPane.showMessageDialog(null, "Algo salió mal, no se ha podido exportar la base de datos.",
+                "Exportación errónea", JOptionPane.ERROR_MESSAGE);
             }
             
             
@@ -229,6 +248,7 @@ public class ExportRestore extends javax.swing.JFrame {
             e.printStackTrace();
         }
     }
+    
     
     public void importDB()
     {
@@ -257,7 +277,10 @@ public class ExportRestore extends javax.swing.JFrame {
                         try {
                             Process p = Runtime
                                   .getRuntime()
-                                    .exec("/Applications/XAMPP/xamppfiles/bin/mysql -h db4free.net -u oswaldo -poswaldohuerta abarrotera");
+                                    //Importación de BD desde mysql remoto en db4free
+//                                    .exec("/Applications/XAMPP/xamppfiles/bin/mysql -h db4free.net -u oswaldo -poswaldohuerta abarrotera");
+                                    .exec("/Applications/XAMPP/xamppfiles/bin/mysql -h localhost -u root");
+
                                   //.exec("C:/Aplicaciones/wamp/bin/mysql/mysql5.1.36/bin/mysql -u root -ppassword database");
 
                             String username = System.getProperty("user.name");
@@ -273,14 +296,22 @@ public class ExportRestore extends javax.swing.JFrame {
                                os.write(buffer, 0, leido);
                                leido = fis.read(buffer);
                             }
-                             System.out.println("¡Importación exitosa!");
-
-                            os.flush();
-                            os.close();
-                            fis.close();
+                            
+                            
+                            
+//                             System.out.println("¡Importación exitosa!");
+                               JOptionPane.showMessageDialog(null, "¡Se ha importado la base de datos exitosamente!",
+                               "Importación exitosa", JOptionPane.INFORMATION_MESSAGE);
+                               
+                               os.flush();
+                               os.close();
+                               fis.close();
+                            
 
                          } catch (Exception e) {
                             e.printStackTrace();
+                            JOptionPane.showMessageDialog(null, "Algo salió mal, no se ha podido importar la base de datos.",
+                            "Importación errónea", JOptionPane.ERROR_MESSAGE);
                          }
                     }
     }
@@ -300,6 +331,7 @@ public class ExportRestore extends javax.swing.JFrame {
         jPanel4 = new javax.swing.JPanel();
         btnExport2 = new javax.swing.JButton();
         btnImport = new javax.swing.JButton();
+        btnHome = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
@@ -390,6 +422,16 @@ public class ExportRestore extends javax.swing.JFrame {
                 .addContainerGap(14, Short.MAX_VALUE))
         );
 
+        btnHome.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/home/store (2).png"))); // NOI18N
+        btnHome.setBorderPainted(false);
+        btnHome.setContentAreaFilled(false);
+        btnHome.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnHome.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnHomeActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -397,16 +439,20 @@ public class ExportRestore extends javax.swing.JFrame {
             .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnHome))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGap(18, 18, 18)
+                .addComponent(btnHome)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -438,6 +484,12 @@ public class ExportRestore extends javax.swing.JFrame {
         new Principal().setVisible(true);
         this.dispose();
     }//GEN-LAST:event_formWindowClosing
+
+    private void btnHomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHomeActionPerformed
+        // TODO add your handling code here:
+        new Principal().setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnHomeActionPerformed
 
     /**
      * @param args the command line arguments
@@ -475,14 +527,11 @@ public class ExportRestore extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnExport;
-    private javax.swing.JButton btnExport1;
     private javax.swing.JButton btnExport2;
+    private javax.swing.JButton btnHome;
     private javax.swing.JButton btnImport;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel6;
     // End of variables declaration//GEN-END:variables

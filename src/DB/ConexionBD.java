@@ -10,21 +10,22 @@ import javax.swing.JOptionPane;
 public class ConexionBD {
 
 public  String puerto="3306";
-//public  String nomservidor="localhost";
+public  String nomservidor="localhost";
 //public  String nomservidor="sql5.freemysqlhosting.net";
-public  String nomservidor="db4free.net";
+//public  String nomservidor="db4free.net";
 //public  String db="servicioing";
 //public  String db="sql5108911";
 //public  String db="ssing";
 public String db="abarrotera";
-//public  String user="alexander92";
+public  String user="root";
 //public  String user="sql5108911";
 //public  String user="ssing";
-public String user="oswaldo";
+//public  String user="oswaldo";
 //public  String pass="shark123";
-//public  String pass="Rd3DwnStke";
+public  String pass="";
 //public  String pass="shark123";
-public String pass="oswaldohuerta";
+//public String pass="oswaldohuerta";
+
 //Connection conn=null;
 
 private Connection conn;

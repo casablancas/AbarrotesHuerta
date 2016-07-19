@@ -32,7 +32,7 @@ public class AgregarProducto extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         this.setResizable(false);
         txtProducto.grabFocus();
-        optFam1.setSelected(true);
+        optVinosLicores.setSelected(true);
         btnAgregarProducto.setEnabled(false);
         toolTips();
     }
@@ -53,29 +53,39 @@ public class AgregarProducto extends javax.swing.JFrame {
     {
         String familia = null;
         
-        if (optFam1.isSelected())
-            familia = "Familia 1";
-        else if (optFam2.isSelected())
-            familia = "Familia 2";
-        else if (optFam3.isSelected())
-            familia = "Familia 3";
-        else if (optFam4.isSelected())
-            familia = "Familia 4";
-        else if (optFam5.isSelected())
-            familia = "Familia 5";
-        else if (optFam6.isSelected())
-            familia = "Familia 6";
+        if (optVinosLicores.isSelected())
+            familia = "VINOS Y LICORES";
+        else if (optChilesSemillas.isSelected())
+            familia = "CHILES Y SEMILLAS";
+        else if (optDulceria.isSelected())
+            familia = "DULCERIA";
+        else if (optMateriasPrimas.isSelected())
+            familia = "MATERIAS PRIMAS";
+        else if (optAbarrotes.isSelected())
+            familia = "ABARROTES";
+        else if (optJarcieria.isSelected())
+            familia = "JARCIERIA";
+        else if (optCarnesFriasLacteos.isSelected())
+            familia = "CARNES FRIAS Y LACTEOS";
+        else if (optPerfumeria.isSelected())
+            familia = "PERFUMERIA";
+        else if (optFarmaceuticos.isSelected())
+            familia = "FARMACEUTICOS";
+        else if (optPapeleria.isSelected())
+            familia = "PAPELERIA";
+        else if (optAutomotriz.isSelected())
+            familia = "AUTOMOTRIZ";
         
         String sql = "INSERT INTO producto (nombre, familia) VALUES (?,?)";
         
         try {
             PreparedStatement pst = cn.prepareStatement(sql);
-            pst.setString(1, txtProducto.getText());
+            pst.setString(1, (txtProducto.getText()).toUpperCase());
             pst.setString(2, familia);
             pst.executeUpdate();
             JOptionPane.showMessageDialog(null, "Se ha insertado el producto con éxito.",
             "Inserción correcta", JOptionPane.INFORMATION_MESSAGE);
-            optFam1.setSelected(true);
+            optVinosLicores.setSelected(true);
             txtProducto.setText("");
             txtProducto.grabFocus();
         } catch (SQLException ex) {
@@ -86,12 +96,13 @@ public class AgregarProducto extends javax.swing.JFrame {
             System.err.println(ex);
             txtProducto.setText("");
             txtProducto.grabFocus();
+            btnAgregarProducto.setEnabled(false);
             //Logger.getLogger(AgregarProducto.class.getName()).log(Level.SEVERE, null, ex);
         }
         cc.desconectar();
     }
     
-    public void productoDuplicado(String nombre)
+    /*public void productoDuplicado(String nombre)
     {
         String sql = "SELECT nombre from pedido WHERE nombre = '"+nombre+"'";
         
@@ -111,7 +122,7 @@ public class AgregarProducto extends javax.swing.JFrame {
         } catch (SQLException ex) {
             Logger.getLogger(HacerPedido.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
+    }*/
     
     public void activaBoton()
     {
@@ -136,12 +147,17 @@ public class AgregarProducto extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         txtProducto = new javax.swing.JTextField();
         jPanel5 = new javax.swing.JPanel();
-        optFam5 = new javax.swing.JRadioButton();
-        optFam3 = new javax.swing.JRadioButton();
-        optFam4 = new javax.swing.JRadioButton();
-        optFam1 = new javax.swing.JRadioButton();
-        optFam6 = new javax.swing.JRadioButton();
-        optFam2 = new javax.swing.JRadioButton();
+        optAbarrotes = new javax.swing.JRadioButton();
+        optDulceria = new javax.swing.JRadioButton();
+        optFarmaceuticos = new javax.swing.JRadioButton();
+        optVinosLicores = new javax.swing.JRadioButton();
+        optJarcieria = new javax.swing.JRadioButton();
+        optChilesSemillas = new javax.swing.JRadioButton();
+        optCarnesFriasLacteos = new javax.swing.JRadioButton();
+        optPerfumeria = new javax.swing.JRadioButton();
+        optPapeleria = new javax.swing.JRadioButton();
+        optMateriasPrimas = new javax.swing.JRadioButton();
+        optAutomotriz = new javax.swing.JRadioButton();
         btnAgregarProducto = new javax.swing.JButton();
         jPanel6 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
@@ -176,86 +192,134 @@ public class AgregarProducto extends javax.swing.JFrame {
         jPanel5.setBackground(new java.awt.Color(255, 255, 255));
         jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(191, 54, 12), 2, true), "Seleccione la famila", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Lucida Grande", 0, 13), new java.awt.Color(191, 54, 12))); // NOI18N
 
-        optFam5.setBackground(new java.awt.Color(255, 255, 255));
-        buttonGroupFamilias.add(optFam5);
-        optFam5.setText("Familia 5");
-        optFam5.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        optAbarrotes.setBackground(new java.awt.Color(255, 255, 255));
+        buttonGroupFamilias.add(optAbarrotes);
+        optAbarrotes.setText("Abarrotes");
+        optAbarrotes.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
-        optFam3.setBackground(new java.awt.Color(255, 255, 255));
-        buttonGroupFamilias.add(optFam3);
-        optFam3.setText("Familia 3");
-        optFam3.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        optFam3.addActionListener(new java.awt.event.ActionListener() {
+        optDulceria.setBackground(new java.awt.Color(255, 255, 255));
+        buttonGroupFamilias.add(optDulceria);
+        optDulceria.setText("Dulcería");
+        optDulceria.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        optDulceria.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                optFam3ActionPerformed(evt);
+                optDulceriaActionPerformed(evt);
             }
         });
 
-        optFam4.setBackground(new java.awt.Color(255, 255, 255));
-        buttonGroupFamilias.add(optFam4);
-        optFam4.setText("Familia 4");
-        optFam4.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        optFarmaceuticos.setBackground(new java.awt.Color(255, 255, 255));
+        buttonGroupFamilias.add(optFarmaceuticos);
+        optFarmaceuticos.setText("Farmacéuticos");
+        optFarmaceuticos.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
-        optFam1.setBackground(new java.awt.Color(255, 255, 255));
-        buttonGroupFamilias.add(optFam1);
-        optFam1.setText("Familia 1");
-        optFam1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        optFam1.addActionListener(new java.awt.event.ActionListener() {
+        optVinosLicores.setBackground(new java.awt.Color(255, 255, 255));
+        buttonGroupFamilias.add(optVinosLicores);
+        optVinosLicores.setText("Vinos y licores");
+        optVinosLicores.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        optVinosLicores.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                optFam1ActionPerformed(evt);
+                optVinosLicoresActionPerformed(evt);
             }
         });
 
-        optFam6.setBackground(new java.awt.Color(255, 255, 255));
-        buttonGroupFamilias.add(optFam6);
-        optFam6.setText("Familia 6");
-        optFam6.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        optJarcieria.setBackground(new java.awt.Color(255, 255, 255));
+        buttonGroupFamilias.add(optJarcieria);
+        optJarcieria.setText("Jarciería");
+        optJarcieria.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
-        optFam2.setBackground(new java.awt.Color(255, 255, 255));
-        buttonGroupFamilias.add(optFam2);
-        optFam2.setText("Familia 2");
-        optFam2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        optFam2.addActionListener(new java.awt.event.ActionListener() {
+        optChilesSemillas.setBackground(new java.awt.Color(255, 255, 255));
+        buttonGroupFamilias.add(optChilesSemillas);
+        optChilesSemillas.setText("Chiles y semillas");
+        optChilesSemillas.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        optChilesSemillas.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                optFam2ActionPerformed(evt);
+                optChilesSemillasActionPerformed(evt);
             }
         });
+
+        optCarnesFriasLacteos.setBackground(new java.awt.Color(255, 255, 255));
+        buttonGroupFamilias.add(optCarnesFriasLacteos);
+        optCarnesFriasLacteos.setText("Carnes frías y lácteos");
+        optCarnesFriasLacteos.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        optCarnesFriasLacteos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                optCarnesFriasLacteosActionPerformed(evt);
+            }
+        });
+
+        optPerfumeria.setBackground(new java.awt.Color(255, 255, 255));
+        buttonGroupFamilias.add(optPerfumeria);
+        optPerfumeria.setText("Perfumería");
+        optPerfumeria.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+
+        optPapeleria.setBackground(new java.awt.Color(255, 255, 255));
+        buttonGroupFamilias.add(optPapeleria);
+        optPapeleria.setText("Papelería");
+        optPapeleria.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+
+        optMateriasPrimas.setBackground(new java.awt.Color(255, 255, 255));
+        buttonGroupFamilias.add(optMateriasPrimas);
+        optMateriasPrimas.setText("Materias primas");
+        optMateriasPrimas.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+
+        optAutomotriz.setBackground(new java.awt.Color(255, 255, 255));
+        buttonGroupFamilias.add(optAutomotriz);
+        optAutomotriz.setText("Automotriz");
+        optAutomotriz.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
-                .addContainerGap(25, Short.MAX_VALUE)
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addComponent(optFam2)
-                        .addGap(18, 18, 18)
-                        .addComponent(optFam4))
-                    .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addComponent(optFam1)
-                        .addGap(18, 18, 18)
-                        .addComponent(optFam3)))
-                .addGap(18, 18, 18)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(optFam5)
-                    .addComponent(optFam6, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addContainerGap())
+                    .addComponent(optCarnesFriasLacteos)
+                    .addComponent(optVinosLicores)
+                    .addComponent(optChilesSemillas)
+                    .addComponent(optMateriasPrimas))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                                .addComponent(optFarmaceuticos)
+                                .addGap(18, 18, 18))
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(optDulceria)
+                                    .addComponent(optPerfumeria))
+                                .addGap(39, 39, 39)))
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(optPapeleria)
+                            .addComponent(optJarcieria)
+                            .addComponent(optAbarrotes)))
+                    .addComponent(optAutomotriz))
+                .addGap(18, 18, 18))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(optFam5)
-                    .addComponent(optFam3)
-                    .addComponent(optFam1))
+                    .addComponent(optAbarrotes)
+                    .addComponent(optDulceria)
+                    .addComponent(optVinosLicores))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(optFam4)
-                    .addComponent(optFam6)
-                    .addComponent(optFam2))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(optFarmaceuticos)
+                    .addComponent(optJarcieria)
+                    .addComponent(optChilesSemillas))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(optPerfumeria)
+                    .addComponent(optPapeleria)
+                    .addComponent(optCarnesFriasLacteos))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(optMateriasPrimas)
+                    .addComponent(optAutomotriz))
+                .addContainerGap(19, Short.MAX_VALUE))
         );
 
         btnAgregarProducto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/save/diskette.png"))); // NOI18N
@@ -285,17 +349,17 @@ public class AgregarProducto extends javax.swing.JFrame {
         );
         Ingreso_datosLayout.setVerticalGroup(
             Ingreso_datosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(Ingreso_datosLayout.createSequentialGroup()
-                .addGroup(Ingreso_datosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, Ingreso_datosLayout.createSequentialGroup()
+                .addGroup(Ingreso_datosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(Ingreso_datosLayout.createSequentialGroup()
-                        .addGap(12, 12, 12)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(18, 18, 18)
                         .addComponent(txtProducto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
                         .addComponent(btnAgregarProducto)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         jPanel6.setBackground(new java.awt.Color(191, 54, 12));
@@ -321,7 +385,7 @@ public class AgregarProducto extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        btnHome.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/home/cabin.png"))); // NOI18N
+        btnHome.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/home/store (2).png"))); // NOI18N
         btnHome.setBorderPainted(false);
         btnHome.setContentAreaFilled(false);
         btnHome.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -379,21 +443,21 @@ public class AgregarProducto extends javax.swing.JFrame {
         cc.desconectar();
     }//GEN-LAST:event_formWindowClosing
 
-    private void optFam3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_optFam3ActionPerformed
+    private void optDulceriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_optDulceriaActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_optFam3ActionPerformed
+    }//GEN-LAST:event_optDulceriaActionPerformed
 
-    private void optFam1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_optFam1ActionPerformed
+    private void optVinosLicoresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_optVinosLicoresActionPerformed
         // TODO add your handling code here:
-        if(evt.getSource() == optFam1)
+        if(evt.getSource() == optVinosLicores)
         {
             setBackground(Color.GREEN);
         }
-    }//GEN-LAST:event_optFam1ActionPerformed
+    }//GEN-LAST:event_optVinosLicoresActionPerformed
 
-    private void optFam2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_optFam2ActionPerformed
+    private void optChilesSemillasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_optChilesSemillasActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_optFam2ActionPerformed
+    }//GEN-LAST:event_optChilesSemillasActionPerformed
 
     private void btnHomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHomeActionPerformed
         // TODO add your handling code here:
@@ -405,9 +469,7 @@ public class AgregarProducto extends javax.swing.JFrame {
         // TODO add your handling code here:
         String producto = txtProducto.getText();
         if(!producto.equals(""))
-            //agregarProducto();
-            productoDuplicado(producto);
-            //System.out.println("Se inserta el producto");
+            agregarProducto();
         else
             JOptionPane.showMessageDialog(null, "No se puede insertar un producto vacío.",
             "Ha ocurrido un error", JOptionPane.WARNING_MESSAGE);
@@ -422,14 +484,23 @@ public class AgregarProducto extends javax.swing.JFrame {
         // TODO add your handling code here:
         char c = evt.getKeyChar(); 
         
-        if(Character.isDigit(c) || Character.isLetter(c))
+        //Convertimos cualquier letra ingresada en el textfield en mayúscula.
+        if(Character.isLowerCase(c))
         {
-            btnAgregarProducto.setEnabled(true);
-            getToolkit().beep();
+            evt.setKeyChar(Character.toUpperCase(c));
+            if(Character.isDigit(c) || Character.isLetter(c))
+            {
+                btnAgregarProducto.setEnabled(true);
+//              getToolkit().beep();
+            }
+            else
+                btnAgregarProducto.setEnabled(false);
         }
-        else
-            btnAgregarProducto.setEnabled(false);
     }//GEN-LAST:event_txtProductoKeyTyped
+
+    private void optCarnesFriasLacteosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_optCarnesFriasLacteosActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_optCarnesFriasLacteosActionPerformed
 
     /**
      * @param args the command line arguments
@@ -477,12 +548,17 @@ public class AgregarProducto extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
-    private javax.swing.JRadioButton optFam1;
-    private javax.swing.JRadioButton optFam2;
-    private javax.swing.JRadioButton optFam3;
-    private javax.swing.JRadioButton optFam4;
-    private javax.swing.JRadioButton optFam5;
-    private javax.swing.JRadioButton optFam6;
+    private javax.swing.JRadioButton optAbarrotes;
+    private javax.swing.JRadioButton optAutomotriz;
+    private javax.swing.JRadioButton optCarnesFriasLacteos;
+    private javax.swing.JRadioButton optChilesSemillas;
+    private javax.swing.JRadioButton optDulceria;
+    private javax.swing.JRadioButton optFarmaceuticos;
+    private javax.swing.JRadioButton optJarcieria;
+    private javax.swing.JRadioButton optMateriasPrimas;
+    private javax.swing.JRadioButton optPapeleria;
+    private javax.swing.JRadioButton optPerfumeria;
+    private javax.swing.JRadioButton optVinosLicores;
     private javax.swing.JTextField txtProducto;
     // End of variables declaration//GEN-END:variables
 }
