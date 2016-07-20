@@ -217,7 +217,7 @@ public class ExportRestore extends javax.swing.JFrame {
         String pass = "";
         String db = "abarrotera";
         
-        String executeCmd = "/Applications/XAMPP/xamppfiles/bin/mysqldump -u" + user +  " --add-drop-database -B " + db + " -r " + pathArchivo+".sql";
+        String executeCmd = "/Applications/XAMPP/xamppfiles/bin/mysqldump -u" + user +  " --add-drop-database -B " + db + " -r " + pathArchivo.replace(" ", "")+".sql";
         
         try {
             Runtime runtime = Runtime.getRuntime();
