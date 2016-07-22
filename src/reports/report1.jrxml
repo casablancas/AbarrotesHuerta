@@ -4,7 +4,7 @@
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<queryString language="SQL">
-		<![CDATA[SELECT * FROM `producto` ORDER BY familia;]]>
+		<![CDATA[SELECT * FROM `pedido` ORDER BY familia;]]>
 	</queryString>
 	<field name="nombre" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
@@ -54,12 +54,16 @@
 					<text><![CDATA[ABARROTES HUERTA]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="395" y="43" width="180" height="20" forecolor="#FFFFFF" uuid="eb7f0a59-0289-40e2-bbf4-5370782868ba"/>
-					<textElement textAlignment="Right">
+					<reportElement x="20" y="72" width="180" height="20" forecolor="#FFFFFF" uuid="eb7f0a59-0289-40e2-bbf4-5370782868ba"/>
+					<textElement>
 						<font size="14" isBold="false"/>
 					</textElement>
 					<text><![CDATA[Lista de pedidos]]></text>
 				</staticText>
+				<image scaleImage="FillFrame">
+					<reportElement x="511" y="20" width="64" height="64" uuid="5362cf5c-9653-4c7b-ac9a-8e8e70ed9b89"/>
+					<imageExpression><![CDATA["/Users/alejandro/NetBeansProjects/Abarrotera-Huerta/src/icons/home/store (2).png"]]></imageExpression>
+				</image>
 			</frame>
 		</band>
 	</title>

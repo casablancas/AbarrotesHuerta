@@ -45,7 +45,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Vector;
 import javax.activation.ActivationDataFlavor;
@@ -90,6 +92,8 @@ public class HacerPedido extends javax.swing.JFrame {
         tablaProductosRegistrados.setEditingRow(ERROR);
         toolTips();
         btnImprimePedido.setVisible(false);
+//        btnPedido.setEnabled(false);
+//        llenadoComboBox();
 //        jButton1.setVisible(false);
         
 //        tablaProductosRegistrados.getSelectionModel().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -124,22 +128,34 @@ public class HacerPedido extends javax.swing.JFrame {
     
     public void toolTips()
     {
-        btnPedido.setToolTipText("Elija un ítem de la lista de productos registrados y despúes de click en este botón para agregarlo a lista de pedidos.");
+        btnPedido.setToolTipText("Elija un elemento de la lista de PRODUCTOS registrados y despúes de clic en este botón para agregarlo a lista de pedidos.");
         txtBusqueda.setToolTipText("Introduzca los caracteres a buscar.");
         btnHome.setToolTipText("Regresar al Menú Principal.");
         btnGeneraPDF.setToolTipText("Presione para generar un documento PDF.");
         btnImprimePedido.setToolTipText("Presione para impresión rápida del pedido.");
         btnNuevoPedido.setToolTipText("Crear un nuevo pedido (se eliminarán los datos del pedido actual).");
+        btnPedidoRemove.setToolTipText("Elija un elemento de la lista de PEDIDOS y despúes de clic en este botón para eliminarlo de la lista.");
     }
     
     public void confirmacion(){
         if (JOptionPane.showConfirmDialog(rootPane, "¿Realmente desea eliminar este elemento?",
                 "Confirmación para borrar profesor", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
         {
+            //Eliminamos el producto seleccionado de la tabla.
             eliminarProducto();
             //showTable();
         }
-    } 
+    }
+    
+    public void confirmacion2()
+    {
+        if (JOptionPane.showConfirmDialog(rootPane, "¿Realmente desea eliminar este elemento?",
+                "Confirmación para borrar profesor", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
+        {
+            //Eliminamos el pedido seleccionado de la tabla.
+            eliminarElementoPedido();
+        }
+    }
     
     public void nuevoPedido(){
         
@@ -166,6 +182,11 @@ public class HacerPedido extends javax.swing.JFrame {
     //Realiza consulta de los productos.
     public void mostrarProductos(String valor)
     {
+        tablaProductosRegistrados.clearSelection();
+        tablaPedidos.clearSelection();
+        
+        //btnPedido.setEnabled(false);
+        
         DefaultTableModel model;
         
         //Encabezados de la tabla.
@@ -222,6 +243,10 @@ public class HacerPedido extends javax.swing.JFrame {
     //Realiza consulta de los pedidos.
     public void mostrarPedidos()
     {
+        llenadoComboBox();
+        
+        tablaProductosRegistrados.clearSelection();
+        
         DefaultTableModel model;
         
         //Encabezados de la tabla.
@@ -281,30 +306,31 @@ public class HacerPedido extends javax.swing.JFrame {
     {
         int fila = tablaProductosRegistrados.getSelectedRow();
         if(fila>=0){
+//            btnPedido.setEnabled(true);
             String producto = tablaProductosRegistrados.getValueAt(fila, 0).toString();
-        String familia = tablaProductosRegistrados.getValueAt(fila, 1).toString();
-        
-        String sql = "INSERT INTO pedido (nombre, familia, cantidad) VALUES (?,?,?)";
-        try {
-            String cant = JOptionPane.showInputDialog("Especifique la cantidad de productos a pedir:", "");
-            int cantidad = Integer.parseInt(cant);
-            
-            PreparedStatement pst = cn.prepareStatement(sql);
-            pst.setString(1, producto);
-            pst.setString(2, familia);
-            pst.setInt(3, cantidad);
-            pst.executeUpdate();
-//            JOptionPane.showMessageDialog(null, "Se ha insertado el pedido a la cola con éxito.",
-//            "Inserción correcta", JOptionPane.INFORMATION_MESSAGE);
-        } catch (SQLException ex) {
-            //Logger.getLogger(AgregarProducto.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(HacerPedido.this, "Ya existe este producto en la lista de pedidos.", 
-                    "Error al intentar agregar al pedido", JOptionPane.ERROR_MESSAGE);
-            
-        }
-        cc.desconectar();
-        }else
-            JOptionPane.showMessageDialog(null, "Debe elegir un elemento de la lista de productos que desee agregar a la lista de pedidos.", "No se seleccionó ningún elemento.", JOptionPane.ERROR_MESSAGE);
+            String familia = tablaProductosRegistrados.getValueAt(fila, 1).toString();
+
+            String sql = "INSERT INTO pedido (nombre, familia, cantidad) VALUES (?,?,?)";
+                try {
+                    String cant = JOptionPane.showInputDialog("Especifique la cantidad de productos a pedir:", "");
+                    int cantidad = Integer.parseInt(cant);
+
+                    PreparedStatement pst = cn.prepareStatement(sql);
+                    pst.setString(1, producto);
+                    pst.setString(2, familia);
+                    pst.setInt(3, cantidad);
+                    pst.executeUpdate();
+        //            JOptionPane.showMessageDialog(null, "Se ha insertado el pedido a la cola con éxito.",
+        //            "Inserción correcta", JOptionPane.INFORMATION_MESSAGE);
+                } catch (SQLException ex) {
+                    //Logger.getLogger(AgregarProducto.class.getName()).log(Level.SEVERE, null, ex);
+                    JOptionPane.showMessageDialog(HacerPedido.this, "Ya existe este producto en la lista de pedidos.", 
+                            "Error al intentar agregar al pedido", JOptionPane.ERROR_MESSAGE);
+
+                }
+                cc.desconectar();
+            }else
+                JOptionPane.showMessageDialog(null, "Debe elegir un elemento de la lista de productos que desee agregar a la lista de pedidos.", "No se seleccionó ningún elemento.", JOptionPane.ERROR_MESSAGE);
         
         
     }
@@ -561,13 +587,34 @@ public class HacerPedido extends javax.swing.JFrame {
         }
     }
     
-    //Variable para obtener el nombre del producto.
-    String producto;
+    public void generateJasperReportParameter()
+    {
+        Map parametro = new HashMap();
+        parametro.put("proveedor1", jComboBoxProveedor1.getSelectedItem());
+        
+        System.out.println("Parámetro: "+ jComboBoxProveedor1.getSelectedItem());
+        
+        //Obtenemos el path relativo del archivo .jasper de las carpetas del JAR
+        File resPath = new File(getClass().getResource("/reports/reportParameter.jasper").getFile());
+        
+        JasperReport jr = null;
+        try {
+            jr = (JasperReport) JRLoader.loadObjectFromFile(resPath.toString());
+            JasperPrint jp = JasperFillManager.fillReport(jr, parametro, cc.conectar());
+            JasperViewer jv = new JasperViewer(jp, false);
+            jv.setVisible(true);
+            jv.setTitle("Pedidos con parámetro");
+            cc.desconectar();
+        } catch (JRException ex) {
+            Logger.getLogger(HacerPedido.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    
     public void eliminarProducto()
     {
-        //Establece los valores para la sentencia SQL
-        //Connection c = con.conectar();
-        
+        //Variable para obtener el nombre del producto.
+        String producto;
         int fila = tablaProductosRegistrados.getSelectedRow();
         if(fila>=0){
             producto = tablaProductosRegistrados.getValueAt(fila, 0).toString();
@@ -582,7 +629,55 @@ public class HacerPedido extends javax.swing.JFrame {
             }
             
         }else
-            JOptionPane.showMessageDialog(null, "Debe elegir el elemento de la tabla que desea modificar.", "No se seleccionó ningún elemento.", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Debe elegir el elemento de la tabla que desea eliminar.", "No se seleccionó ningún elemento.", JOptionPane.ERROR_MESSAGE);
+    }
+    
+    public void eliminarElementoPedido()
+    {
+        String productoPedido;
+        int fila = tablaPedidos.getSelectedRow();
+        if(fila>=0){
+            productoPedido = tablaPedidos.getValueAt(fila, 1).toString();
+            System.out.println("ID PARA ELIMINAR ACTUAL: " +productoPedido);
+            String sql = "DELETE FROM pedido WHERE  nombre = '"+productoPedido+"'";
+            try {
+                PreparedStatement pst = (PreparedStatement) cn.prepareStatement(sql);
+                pst.executeUpdate();
+                mostrarPedidos();
+            } catch (SQLException ex) {
+                Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
+            }
+            
+        }else
+            JOptionPane.showMessageDialog(null, "Debe elegir el elemento de la tabla que desea remover de la lista de pedidos.", "No se seleccionó ningún elemento.", JOptionPane.ERROR_MESSAGE);
+    }
+    
+    public void llenadoComboBox()
+    {
+        jComboBoxProveedor1.removeAllItems();
+        
+        String sql = "SELECT distinct familia FROM pedido";
+        
+        Statement st;
+        try{
+            st = cn.createStatement();
+            ResultSet rs = st.executeQuery(sql);
+            
+            //Validamos que el resultset contenga datos o esté vacío.
+            while (rs != null && rs.next() ) 
+            { 
+                //codigo para tratar al conjunto de registros o al registro obtenido 
+                System.out.println("Se ha encontrado algo en la base de datos.");
+                //Regresa el puntero al inicio para no perder el primer dato de la tabla.
+                //rs.beforeFirst();
+                jComboBoxProveedor1.addItem((String) rs.getObject(1));
+            }
+            
+        } catch (SQLException ex) {
+            //Logger.getLogger(HacerPedido.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, ex);
+        }
+        
     }
 
     /**
@@ -622,7 +717,9 @@ public class HacerPedido extends javax.swing.JFrame {
         btnNuevoPedido = new javax.swing.JButton();
         btnGeneraPDF = new javax.swing.JButton();
         btnImprimePedido = new javax.swing.JButton();
-        btnPedido1 = new javax.swing.JButton();
+        btnPedidoRemove = new javax.swing.JButton();
+        jComboBoxProveedor1 = new javax.swing.JComboBox<>();
+        jButton1 = new javax.swing.JButton();
 
         Eliminar.setText("Eliminar producto");
         Eliminar.addActionListener(new java.awt.event.ActionListener() {
@@ -634,6 +731,17 @@ public class HacerPedido extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setIconImage(new ImageIcon(getClass().getResource("/views/store.png")).getImage());
+        addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                formMousePressed(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                formMouseReleased(evt);
+            }
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                formMouseClicked(evt);
+            }
+        });
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
@@ -746,7 +854,7 @@ public class HacerPedido extends javax.swing.JFrame {
         Panel_pedido.setLayout(Panel_pedidoLayout);
         Panel_pedidoLayout.setHorizontalGroup(
             Panel_pedidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 498, Short.MAX_VALUE)
         );
         Panel_pedidoLayout.setVerticalGroup(
             Panel_pedidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -770,6 +878,14 @@ public class HacerPedido extends javax.swing.JFrame {
         ));
         tablaProductosRegistrados.setComponentPopupMenu(MenuTabla);
         tablaProductosRegistrados.setSelectionBackground(new java.awt.Color(239, 108, 0));
+        tablaProductosRegistrados.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                tablaProductosRegistradosMousePressed(evt);
+            }
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tablaProductosRegistradosMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tablaProductosRegistrados);
 
         javax.swing.GroupLayout Panel_productosLayout = new javax.swing.GroupLayout(Panel_productos);
@@ -857,18 +973,25 @@ public class HacerPedido extends javax.swing.JFrame {
             }
         });
 
-        btnPedido1.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
-        btnPedido1.setForeground(new java.awt.Color(85, 139, 47));
-        btnPedido1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/smaller/left-arrow.png"))); // NOI18N
-        btnPedido1.setText("Quitar");
-        btnPedido1.setBorderPainted(false);
-        btnPedido1.setContentAreaFilled(false);
-        btnPedido1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnPedido1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnPedido1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnPedido1.addActionListener(new java.awt.event.ActionListener() {
+        btnPedidoRemove.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
+        btnPedidoRemove.setForeground(new java.awt.Color(85, 139, 47));
+        btnPedidoRemove.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/smaller/left-arrow.png"))); // NOI18N
+        btnPedidoRemove.setText("Quitar");
+        btnPedidoRemove.setBorderPainted(false);
+        btnPedidoRemove.setContentAreaFilled(false);
+        btnPedidoRemove.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnPedidoRemove.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnPedidoRemove.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnPedidoRemove.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnPedido1ActionPerformed(evt);
+                btnPedidoRemoveActionPerformed(evt);
+            }
+        });
+
+        jButton1.setText("jButton1");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
             }
         });
 
@@ -886,20 +1009,23 @@ public class HacerPedido extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnNuevoPedido))
                     .addGroup(Panel_generalLayout.createSequentialGroup()
-                        .addGroup(Panel_generalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(Panel_generalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(Panel_generalLayout.createSequentialGroup()
                                 .addComponent(btnHome)
                                 .addGap(18, 18, 18)
-                                .addComponent(btnImprimePedido))
+                                .addComponent(btnImprimePedido)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jButton1))
                             .addComponent(Panel_productos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(Panel_generalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(btnPedido, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnPedido1, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(btnPedidoRemove, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(Panel_generalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(Panel_generalLayout.createSequentialGroup()
-                                .addGap(0, 357, Short.MAX_VALUE)
+                                .addComponent(jComboBoxProveedor1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(btnGeneraPDF))
                             .addComponent(Panel_pedido, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
@@ -924,12 +1050,14 @@ public class HacerPedido extends javax.swing.JFrame {
                         .addGap(118, 118, 118)
                         .addComponent(btnPedido)
                         .addGap(18, 18, 18)
-                        .addComponent(btnPedido1)))
+                        .addComponent(btnPedidoRemove)))
                 .addGap(18, 18, 18)
                 .addGroup(Panel_generalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnHome)
                     .addComponent(btnGeneraPDF)
-                    .addComponent(btnImprimePedido))
+                    .addComponent(btnImprimePedido)
+                    .addComponent(jComboBoxProveedor1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -990,14 +1118,48 @@ public class HacerPedido extends javax.swing.JFrame {
         printPedido();
     }//GEN-LAST:event_btnImprimePedidoActionPerformed
 
-    private void btnPedido1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPedido1ActionPerformed
+    private void btnPedidoRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPedidoRemoveActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_btnPedido1ActionPerformed
+        //Método de confirmación para eliminar un pedido seleccionado.
+        confirmacion2();
+        mostrarPedidos();
+    }//GEN-LAST:event_btnPedidoRemoveActionPerformed
 
     private void EliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EliminarActionPerformed
         // TODO add your handling code here:
+        //Método de confirmación para eliminar un producto seleccionado.
         confirmacion();
     }//GEN-LAST:event_EliminarActionPerformed
+
+    private void formMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseReleased
+        // TODO add your handling code here:
+    }//GEN-LAST:event_formMouseReleased
+
+    private void formMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMousePressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_formMousePressed
+
+    private void formMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_formMouseClicked
+
+    private void tablaProductosRegistradosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaProductosRegistradosMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tablaProductosRegistradosMouseClicked
+
+    private void tablaProductosRegistradosMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaProductosRegistradosMousePressed
+        // TODO add your handling code here:
+//        int fila = tablaProductosRegistrados.getSelectedRow();
+//        if(fila>=0){
+//            btnPedido.setEnabled(true);
+//        }else
+//          btnPedido.setEnabled(false);
+    }//GEN-LAST:event_tablaProductosRegistradosMousePressed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        generateJasperReportParameter();
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     
     class TableRowTransferHandler extends TransferHandler {
@@ -1187,7 +1349,9 @@ class TS extends TransferHandler {
     private javax.swing.JButton btnImprimePedido;
     private javax.swing.JButton btnNuevoPedido;
     private javax.swing.JButton btnPedido;
-    private javax.swing.JButton btnPedido1;
+    private javax.swing.JButton btnPedidoRemove;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JComboBox<String> jComboBoxProveedor1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel8;

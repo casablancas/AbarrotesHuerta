@@ -41,7 +41,7 @@ public class AgregarProducto extends javax.swing.JFrame {
         ConexionBD cc = new ConexionBD();
         Connection cn = cc.conectar();
         
-        String proveedor = "";
+        String proveedor1, proveedor2 = "";
         
     public void toolTips()
     {
@@ -50,9 +50,14 @@ public class AgregarProducto extends javax.swing.JFrame {
         btnHome.setToolTipText("Regresar al Menú Principal.");
     }
     
-    public void getProveedor(String comboProveedor)
+    public void getProveedor1(String comboProveedor)
     {
-        proveedor = comboProveedor;
+        proveedor1 = comboProveedor;
+    }
+    
+    public void getProveedor2(String comboProveedor)
+    {
+        proveedor2 = comboProveedor;
     }
     
     
@@ -83,21 +88,31 @@ public class AgregarProducto extends javax.swing.JFrame {
         else if (optAutomotriz.isSelected())
             familia = "AUTOMOTRIZ";
         
-        String sql = "INSERT INTO producto (nombre, familia) VALUES (?,?)";
+        //Capturamos los valores del jcombobox.
+        getProveedor1(jComboBoxProveedor1.getSelectedItem().toString());
+        getProveedor2(jComboBoxProveedor2.getSelectedItem().toString());
+        
+//        if(jComboBoxProveedor1.getSelectedIndex())
+//            proveedor1="";
+        
+        String sql = "INSERT INTO producto (nombre, familia, proveedor1, proveedor2) VALUES (?,?,?,?)";
         
         try {
             PreparedStatement pst = cn.prepareStatement(sql);
             pst.setString(1, (txtProducto.getText()).toUpperCase());
             pst.setString(2, familia);
+            pst.setString(3, proveedor1);
+            pst.setString(4, proveedor2);
             pst.executeUpdate();
             JOptionPane.showMessageDialog(null, "Se ha insertado el producto con éxito.",
             "Inserción correcta", JOptionPane.INFORMATION_MESSAGE);
+            
             optVinosLicores.setSelected(true);
             txtProducto.setText("");
             txtProducto.grabFocus();
-            //Capturamos los valores del jcombobox.
-            getProveedor(jComboBoxProveedor.getSelectedItem().toString());
-            System.out.println("Valor jcombobox: " +proveedor + " o: " + jComboBoxProveedor.getSelectedItem().toString());
+            
+            System.out.println("Valor jcombobox 1: " +proveedor1 + " o: " + jComboBoxProveedor1.getSelectedItem().toString());
+            System.out.println("Valor jcombobox 2: " +proveedor2);
         } catch (SQLException ex) {
 //            JOptionPane.showMessageDialog(null, "No se ha podido insertar el producto porque ya existe.",
 //            "Producto ya existente", JOptionPane.INFORMATION_MESSAGE);
@@ -168,7 +183,8 @@ public class AgregarProducto extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         txtProducto = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
-        jComboBoxProveedor = new javax.swing.JComboBox<>();
+        jComboBoxProveedor1 = new javax.swing.JComboBox<>();
+        jComboBoxProveedor2 = new javax.swing.JComboBox<>();
         jPanel6 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         btnHome = new javax.swing.JButton();
@@ -317,7 +333,7 @@ public class AgregarProducto extends javax.swing.JFrame {
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(optMateriasPrimas)
                     .addComponent(optAutomotriz))
-                .addContainerGap(19, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
@@ -343,16 +359,15 @@ public class AgregarProducto extends javax.swing.JFrame {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(txtProducto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(50, 50, 50))
+            .addComponent(txtProducto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(191, 54, 12), 2, true), "Seleccione el proveedor", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Lucida Grande", 0, 13), new java.awt.Color(191, 54, 12))); // NOI18N
 
-        jComboBoxProveedor.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Proveedor 1", "Proveedor 2", "Proveedor 3", "Proveedor 4", "Proveedor 5", "Proveedor 6", "Proveedor 7", "Proveedor 8", "Proveedor 9", "Proveedor 10", "Proveedor 11" }));
+        jComboBoxProveedor1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Elija proveedor", "Proveedor 1", "Proveedor 2", "Proveedor 3", "Proveedor 4", "Proveedor 5", "Proveedor 6", "Proveedor 7", "Proveedor 8", "Proveedor 9", "Proveedor 10", "Proveedor 11" }));
+
+        jComboBoxProveedor2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Elija proveedor", "Proveedor 1", "Proveedor 2", "Proveedor 3", "Proveedor 4", "Proveedor 5", "Proveedor 6", "Proveedor 7", "Proveedor 8", "Proveedor 9", "Proveedor 10", "Proveedor 11" }));
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -360,15 +375,19 @@ public class AgregarProducto extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jComboBoxProveedor, 0, 278, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jComboBoxProveedor1, 0, 278, Short.MAX_VALUE)
+                    .addComponent(jComboBoxProveedor2, 0, 278, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(25, Short.MAX_VALUE)
-                .addComponent(jComboBoxProveedor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jComboBoxProveedor1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
+                .addComponent(jComboBoxProveedor2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(17, 17, 17))
         );
 
         javax.swing.GroupLayout Ingreso_datosLayout = new javax.swing.GroupLayout(Ingreso_datos);
@@ -387,9 +406,9 @@ public class AgregarProducto extends javax.swing.JFrame {
         Ingreso_datosLayout.setVerticalGroup(
             Ingreso_datosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, Ingreso_datosLayout.createSequentialGroup()
-                .addGroup(Ingreso_datosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(Ingreso_datosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(Ingreso_datosLayout.createSequentialGroup()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -591,7 +610,8 @@ public class AgregarProducto extends javax.swing.JFrame {
     private javax.swing.JButton btnAgregarProducto;
     private javax.swing.JButton btnHome;
     private javax.swing.ButtonGroup buttonGroupFamilias;
-    private javax.swing.JComboBox<String> jComboBoxProveedor;
+    private javax.swing.JComboBox<String> jComboBoxProveedor1;
+    private javax.swing.JComboBox<String> jComboBoxProveedor2;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
