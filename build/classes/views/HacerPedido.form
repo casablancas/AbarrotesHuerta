@@ -74,40 +74,36 @@
               <Component id="Panel_listado" alignment="0" max="32767" attributes="0"/>
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="Busqueda_producto" max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="btnNuevoPedido" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+              </Group>
+              <Group type="102" attributes="0">
+                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
                       <Group type="102" attributes="0">
-                          <Component id="Busqueda_producto" max="32767" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="btnNuevoPedido" min="-2" max="-2" attributes="0"/>
+                          <Component id="btnHome" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Component id="btnImprimePedido" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
+                          <Component id="jButton1" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <Group type="102" alignment="0" attributes="0">
-                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                              <Group type="102" attributes="0">
-                                  <Component id="btnHome" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                  <Component id="btnImprimePedido" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="32767" attributes="0"/>
-                                  <Component id="jButton1" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <Component id="Panel_productos" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="btnPedido" min="-2" pref="93" max="-2" attributes="0"/>
-                              <Component id="btnPedidoRemove" min="-2" pref="93" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" attributes="0">
-                                  <Component id="jComboBoxProveedor1" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="32767" attributes="0"/>
-                                  <Component id="btnGeneraPDF" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <Component id="Panel_pedido" max="32767" attributes="0"/>
-                          </Group>
-                      </Group>
+                      <Component id="Panel_productos" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="btnPedido" min="-2" pref="93" max="-2" attributes="0"/>
+                      <Component id="btnPedidoRemove" min="-2" pref="93" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" attributes="0">
+                          <Component id="jComboBoxProveedor1" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
+                          <Component id="btnGeneraPDF" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <Component id="Panel_pedido" max="32767" attributes="0"/>
+                  </Group>
               </Group>
           </Group>
         </DimensionLayout>
@@ -137,15 +133,25 @@
                           <Component id="btnPedidoRemove" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="btnHome" min="-2" max="-2" attributes="0"/>
-                      <Component id="btnGeneraPDF" min="-2" max="-2" attributes="0"/>
-                      <Component id="btnImprimePedido" min="-2" max="-2" attributes="0"/>
-                      <Component id="jComboBoxProveedor1" min="-2" max="-2" attributes="0"/>
-                      <Component id="jButton1" min="-2" max="-2" attributes="0"/>
+                      <Group type="102" attributes="0">
+                          <Component id="jComboBoxProveedor1" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
+                          <Component id="jButton1" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="btnGeneraPDF" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="1" attributes="0">
+                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="btnHome" alignment="1" min="-2" max="-2" attributes="0"/>
+                              <Component id="btnImprimePedido" alignment="1" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
                   </Group>
-                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -205,6 +211,7 @@
                       <Color PropertyName="color" blue="c" green="36" red="bf" type="rgb"/>
                     </LineBorder>
                   </Border>
+                  <Font PropertyName="font" name="Lucida Grande" size="14" style="0"/>
                   <Color PropertyName="color" blue="c" green="36" red="bf" type="rgb"/>
                 </TitledBorder>
               </Border>
@@ -306,6 +313,7 @@
                       <Color PropertyName="color" blue="c" green="36" red="bf" type="rgb"/>
                     </LineBorder>
                   </Border>
+                  <Font PropertyName="font" name="Lucida Grande" size="14" style="0"/>
                   <Color PropertyName="color" blue="c" green="36" red="bf" type="rgb"/>
                 </TitledBorder>
               </Border>
@@ -315,7 +323,7 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jScrollPane2" alignment="0" pref="498" max="32767" attributes="0"/>
+                  <Component id="jScrollPane2" alignment="0" pref="510" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
@@ -334,6 +342,9 @@
               <SubComponents>
                 <Component class="javax.swing.JTable" name="tablaPedidos">
                   <Properties>
+                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                      <Font name="Lucida Grande" size="14" style="2"/>
+                    </Property>
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                       <Table columnCount="0" rowCount="4"/>
                     </Property>
@@ -365,6 +376,7 @@
                       <Color PropertyName="color" blue="c" green="36" red="bf" type="rgb"/>
                     </LineBorder>
                   </Border>
+                  <Font PropertyName="font" name="Lucida Grande" size="14" style="0"/>
                   <Color PropertyName="color" blue="c" green="36" red="bf" type="rgb"/>
                 </TitledBorder>
               </Border>
@@ -400,6 +412,9 @@
                 <Component class="javax.swing.JTable" name="tablaProductosRegistrados">
                   <Properties>
                     <Property name="autoCreateRowSorter" type="boolean" value="true"/>
+                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                      <Font name="Lucida Grande" size="14" style="2"/>
+                    </Property>
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                       <Table columnCount="0" rowCount="4"/>
                     </Property>
@@ -446,13 +461,13 @@
         <Component class="javax.swing.JButton" name="btnPedido">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Lucida Grande" size="12" style="1"/>
+              <Font name="Lucida Grande" size="14" style="1"/>
             </Property>
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="2f" green="8b" red="55" type="rgb"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/icons/greater/right-arrow.png"/>
+              <Image iconType="3" name="/icons/greater/cart+.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Agregar"/>
             <Property name="borderPainted" type="boolean" value="false"/>
@@ -494,7 +509,7 @@
         <Component class="javax.swing.JButton" name="btnGeneraPDF">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Lucida Grande" size="12" style="1"/>
+              <Font name="Lucida Grande" size="14" style="1"/>
             </Property>
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="1c" green="1c" red="b7" type="rgb"/>
@@ -542,13 +557,13 @@
         <Component class="javax.swing.JButton" name="btnPedidoRemove">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Lucida Grande" size="12" style="1"/>
+              <Font name="Lucida Grande" size="14" style="1"/>
             </Property>
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="2f" green="8b" red="55" type="rgb"/>
+              <Color blue="0" green="0" red="99" type="rgb"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/icons/smaller/left-arrow.png"/>
+              <Image iconType="3" name="/icons/smaller/cart-.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Quitar"/>
             <Property name="borderPainted" type="boolean" value="false"/>

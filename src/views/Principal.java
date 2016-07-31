@@ -57,7 +57,7 @@ public class Principal extends javax.swing.JFrame {
         
         this.setTitle("Menú pricipal");
         this.setLocationRelativeTo(null);
-//        this.setResizable(false);
+        this.setResizable(false);
         toolTips();
         
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
@@ -114,9 +114,9 @@ public class Principal extends javax.swing.JFrame {
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(191, 54, 12), 2, true), "Elija una opción", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Lucida Grande", 0, 13), new java.awt.Color(191, 54, 12))); // NOI18N
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(191, 54, 12), 2, true), "Elija una opción", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Lucida Grande", 0, 14), new java.awt.Color(191, 54, 12))); // NOI18N
 
-        btnAgregarProducto.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
+        btnAgregarProducto.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
         btnAgregarProducto.setForeground(new java.awt.Color(255, 87, 34));
         btnAgregarProducto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/nuevo_producto/bag.png"))); // NOI18N
         btnAgregarProducto.setText("Agregar producto");
@@ -132,7 +132,7 @@ public class Principal extends javax.swing.JFrame {
             }
         });
 
-        btnHacerPedido.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
+        btnHacerPedido.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
         btnHacerPedido.setForeground(new java.awt.Color(255, 87, 34));
         btnHacerPedido.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/hacer_pedido/delivery-truck.png"))); // NOI18N
         btnHacerPedido.setText("Hacer pedido");

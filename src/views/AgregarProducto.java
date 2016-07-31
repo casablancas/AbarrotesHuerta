@@ -41,7 +41,8 @@ public class AgregarProducto extends javax.swing.JFrame {
         ConexionBD cc = new ConexionBD();
         Connection cn = cc.conectar();
         
-        String proveedor1, proveedor2 = "";
+        String proveedor1 = "";
+        String proveedor2 = "";
         
     public void toolTips()
     {
@@ -52,12 +53,12 @@ public class AgregarProducto extends javax.swing.JFrame {
     
     public void getProveedor1(String comboProveedor)
     {
-        proveedor1 = comboProveedor;
+        proveedor1 = comboProveedor.toUpperCase();
     }
     
     public void getProveedor2(String comboProveedor)
     {
-        proveedor2 = comboProveedor;
+        proveedor2 = comboProveedor.toUpperCase();
     }
     
     
@@ -92,8 +93,15 @@ public class AgregarProducto extends javax.swing.JFrame {
         getProveedor1(jComboBoxProveedor1.getSelectedItem().toString());
         getProveedor2(jComboBoxProveedor2.getSelectedItem().toString());
         
-//        if(jComboBoxProveedor1.getSelectedIndex())
-//            proveedor1="";
+        System.out.println("Proveedor 1: "+proveedor1 +"\nProveedor 2: "+proveedor2);
+        
+        if(jComboBoxProveedor1.getSelectedIndex()==0)
+            proveedor1="";
+        
+        if(jComboBoxProveedor2.getSelectedIndex()==0)
+            proveedor2="";
+        
+        System.out.println("Proveedor 1: "+proveedor1 +"\nProveedor 2: "+proveedor2);
         
         String sql = "INSERT INTO producto (nombre, familia, proveedor1, proveedor2) VALUES (?,?,?,?)";
         
@@ -189,6 +197,7 @@ public class AgregarProducto extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         btnHome = new javax.swing.JButton();
         btnAgregarProducto = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setIconImage(new ImageIcon(getClass().getResource("/views/store.png")).getImage());
@@ -204,7 +213,7 @@ public class AgregarProducto extends javax.swing.JFrame {
         Ingreso_datos.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(191, 54, 12), 2, true));
 
         jPanel5.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(191, 54, 12), 2, true), "Seleccione la famila", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Lucida Grande", 0, 13), new java.awt.Color(191, 54, 12))); // NOI18N
+        jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(191, 54, 12), 2, true), "Seleccione la famila", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Lucida Grande", 0, 14), new java.awt.Color(191, 54, 12))); // NOI18N
 
         optAbarrotes.setBackground(new java.awt.Color(255, 255, 255));
         buttonGroupFamilias.add(optAbarrotes);
@@ -337,7 +346,7 @@ public class AgregarProducto extends javax.swing.JFrame {
         );
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(191, 54, 12), 2, true), "Nombre del producto", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Lucida Grande", 0, 13), new java.awt.Color(191, 54, 12))); // NOI18N
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(191, 54, 12), 2, true), "Nombre del producto", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Lucida Grande", 0, 14), new java.awt.Color(191, 54, 12))); // NOI18N
 
         txtProducto.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
@@ -363,11 +372,11 @@ public class AgregarProducto extends javax.swing.JFrame {
         );
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(191, 54, 12), 2, true), "Seleccione el proveedor", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Lucida Grande", 0, 13), new java.awt.Color(191, 54, 12))); // NOI18N
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(191, 54, 12), 2, true), "Seleccione el proveedor", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Lucida Grande", 0, 14), new java.awt.Color(191, 54, 12))); // NOI18N
 
-        jComboBoxProveedor1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Elija proveedor", "Proveedor 1", "Proveedor 2", "Proveedor 3", "Proveedor 4", "Proveedor 5", "Proveedor 6", "Proveedor 7", "Proveedor 8", "Proveedor 9", "Proveedor 10", "Proveedor 11" }));
+        jComboBoxProveedor1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Elija proveedor 1", "Coca Cola", "Pepsi Cola", "Nestle", "Carlos Ruiz", "Abarrotes Cadena", "Gran Bodega", "Arellano", "Chiles y Semillas Suarez", "Vick Pack", "Lala", "Fud" }));
 
-        jComboBoxProveedor2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Elija proveedor", "Proveedor 1", "Proveedor 2", "Proveedor 3", "Proveedor 4", "Proveedor 5", "Proveedor 6", "Proveedor 7", "Proveedor 8", "Proveedor 9", "Proveedor 10", "Proveedor 11" }));
+        jComboBoxProveedor2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Elija proveedor 2", "Coca Cola", "Pepsi Cola", "Nestle", "Carlos Ruiz", "Abarrotes Cadena", "Gran Bodega", "Arellano", "Chiles y Semillas Suarez", "Vick Pack", "Lala", "Fud" }));
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -458,20 +467,34 @@ public class AgregarProducto extends javax.swing.JFrame {
             }
         });
 
+        jButton1.setText("jButton1");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout Panel_generalLayout = new javax.swing.GroupLayout(Panel_general);
         Panel_general.setLayout(Panel_generalLayout);
         Panel_generalLayout.setHorizontalGroup(
             Panel_generalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(Panel_generalLayout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(Panel_generalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(Ingreso_datos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(Panel_generalLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(Ingreso_datos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(Panel_generalLayout.createSequentialGroup()
                         .addComponent(btnHome)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnAgregarProducto)))
+                        .addGap(24, 24, 24)
+                        .addGroup(Panel_generalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(Panel_generalLayout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(btnAgregarProducto))
+                            .addGroup(Panel_generalLayout.createSequentialGroup()
+                                .addComponent(jButton1)
+                                .addGap(0, 0, Short.MAX_VALUE)))))
                 .addContainerGap())
-            .addComponent(jPanel6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         Panel_generalLayout.setVerticalGroup(
             Panel_generalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -480,10 +503,15 @@ public class AgregarProducto extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(Ingreso_datos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(Panel_generalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(btnHome)
-                    .addComponent(btnAgregarProducto))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(Panel_generalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(Panel_generalLayout.createSequentialGroup()
+                        .addComponent(jButton1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnAgregarProducto)
+                        .addContainerGap())
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, Panel_generalLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(btnHome))))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -568,6 +596,17 @@ public class AgregarProducto extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_optCarnesFriasLacteosActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        String proveedor1 = ((String) jComboBoxProveedor1.getSelectedItem()).toUpperCase();
+        String proveedor2 = ((String) jComboBoxProveedor2.getSelectedItem()).toUpperCase();
+        
+        if(jComboBoxProveedor1.getSelectedIndex()==0 || jComboBoxProveedor2.getSelectedIndex()==0)
+            System.out.println("Se eligió el de seleccione proveedor");
+        
+        System.out.println("Proveedor 1: "+proveedor1 +"\nProveedor 2: "+proveedor2);
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -610,6 +649,7 @@ public class AgregarProducto extends javax.swing.JFrame {
     private javax.swing.JButton btnAgregarProducto;
     private javax.swing.JButton btnHome;
     private javax.swing.ButtonGroup buttonGroupFamilias;
+    private javax.swing.JButton jButton1;
     private javax.swing.JComboBox<String> jComboBoxProveedor1;
     private javax.swing.JComboBox<String> jComboBoxProveedor2;
     private javax.swing.JLabel jLabel2;
