@@ -5,7 +5,7 @@
 	<property name="ireport.y" value="0"/>
 	<parameter name="proveedor1" class="java.lang.String"/>
 	<queryString>
-		<![CDATA[SELECT * FROM pedido WHERE proveedor1 = $P{proveedor1};]]>
+		<![CDATA[SELECT * FROM pedido WHERE proveedor1 = $P{proveedor1} OR proveedor2 = $P{proveedor1};]]>
 	</queryString>
 	<field name="id" class="java.lang.Integer">
 		<fieldDescription><![CDATA[]]></fieldDescription>
@@ -60,18 +60,18 @@
 			<frame>
 				<reportElement mode="Opaque" x="-20" y="-20" width="595" height="92" backcolor="#006699" uuid="d39ac4cc-3264-464f-9e9b-a2072741464d"/>
 				<staticText>
-					<reportElement x="20" y="20" width="234" height="43" forecolor="#FFFFFF" uuid="2537318f-4778-49e3-8fc8-b76d54cc8db0"/>
+					<reportElement x="20" y="20" width="373" height="43" forecolor="#FFFFFF" uuid="2537318f-4778-49e3-8fc8-b76d54cc8db0"/>
 					<textElement>
 						<font size="34" isBold="true"/>
 					</textElement>
-					<text><![CDATA[TITLE]]></text>
+					<text><![CDATA[ABARROTES HUERTA]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="395" y="43" width="180" height="20" forecolor="#FFFFFF" uuid="31938a33-fcb0-4833-8c16-48f6624d28fb"/>
-					<textElement textAlignment="Right">
+					<reportElement x="20" y="72" width="234" height="20" forecolor="#FFFFFF" uuid="31938a33-fcb0-4833-8c16-48f6624d28fb"/>
+					<textElement>
 						<font size="14" isBold="false"/>
 					</textElement>
-					<text><![CDATA[Add a description here]]></text>
+					<text><![CDATA[Lista de pedido por provedor]]></text>
 				</staticText>
 			</frame>
 		</band>
@@ -89,7 +89,7 @@
 				<textElement textAlignment="Center">
 					<font size="14" isBold="true"/>
 				</textElement>
-				<text><![CDATA[nombre]]></text>
+				<text><![CDATA[Familia]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
