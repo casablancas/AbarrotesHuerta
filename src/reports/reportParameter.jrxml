@@ -34,7 +34,7 @@
 					<textElement>
 						<font size="12"/>
 					</textElement>
-					<text><![CDATA[familia]]></text>
+					<text><![CDATA[Cantidad]]></text>
 				</staticText>
 				<textField>
 					<reportElement mode="Opaque" x="100" y="0" width="455" height="32" forecolor="#006699" backcolor="#E6E6E6" uuid="2f98d090-f48a-4814-aebf-c56e8b90032e"/>
@@ -73,6 +73,10 @@
 					</textElement>
 					<text><![CDATA[Lista de pedido por provedor]]></text>
 				</staticText>
+				<image>
+					<reportElement x="512" y="20" width="63" height="72" uuid="6455d481-df58-42bd-be86-b86dbb6d48e9"/>
+					<imageExpression><![CDATA["/Users/alejandro/NetBeansProjects/Abarrotera-Huerta/src/icons/store/store.png"]]></imageExpression>
+				</image>
 			</frame>
 		</band>
 	</title>
@@ -89,7 +93,7 @@
 				<textElement textAlignment="Center">
 					<font size="14" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Familia]]></text>
+				<text><![CDATA[Productos]]></text>
 			</staticText>
 		</band>
 	</columnHeader>

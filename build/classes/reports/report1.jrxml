@@ -47,9 +47,9 @@
 			<frame>
 				<reportElement mode="Opaque" x="-20" y="-20" width="595" height="92" backcolor="#006699" uuid="30fc20d3-ed50-4ece-9224-e86a2c63a603"/>
 				<staticText>
-					<reportElement x="20" y="20" width="344" height="43" forecolor="#FFFFFF" uuid="a9c132c6-db8e-44b1-95a0-5e88a938f2e3"/>
+					<reportElement x="20" y="20" width="381" height="43" forecolor="#FFFFFF" uuid="a9c132c6-db8e-44b1-95a0-5e88a938f2e3"/>
 					<textElement>
-						<font size="30" isBold="true"/>
+						<font size="34" isBold="true"/>
 					</textElement>
 					<text><![CDATA[ABARROTES HUERTA]]></text>
 				</staticText>

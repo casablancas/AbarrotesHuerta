@@ -34,6 +34,7 @@ public class AgregarProducto extends javax.swing.JFrame {
         txtProducto.grabFocus();
         optVinosLicores.setSelected(true);
         btnAgregarProducto.setEnabled(false);
+        jButton1.setVisible(false);
         toolTips();
     }
     

@@ -63,6 +63,8 @@ import javax.swing.TransferHandler;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRExporter;
 import net.sf.jasperreports.engine.JRExporterParameter;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
@@ -313,8 +315,8 @@ public class HacerPedido extends javax.swing.JFrame {
                 tablaPedidos.setModel(model);
                 tablaPedidos.getColumn("Nombre").setMinWidth(250);
                 tablaPedidos.getColumn("Familia").setMaxWidth(1);
-                tablaPedidos.getColumn("Prov. 1").setMaxWidth(1);
-                tablaPedidos.getColumn("Prov. 2").setMaxWidth(1);
+                //tablaPedidos.getColumn("Prov. 1").setMaxWidth(1);
+                //tablaPedidos.getColumn("Prov. 2").setMaxWidth(1);
                 cc.desconectar();
             
         } catch (SQLException ex) {
@@ -378,6 +380,36 @@ public class HacerPedido extends javax.swing.JFrame {
             
         } catch (SQLException ex) {
             //Logger.getLogger(HacerPedido.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, ex);
+        }
+        cc.desconectar();
+    }
+    
+    //Elimina los pedidos que se seleccionan por proveedor 1
+    public void eliminaColaPedidoProveedor1(String valor)
+    {
+        String sql = "DELETE FROM pedido WHERE proveedor1 LIKE '%"+valor+"%' OR proveedor2 LIKE '%"+valor+"%' ";
+        try{
+            PreparedStatement pst = (PreparedStatement) cn.prepareStatement(sql);
+            pst.executeUpdate();
+            mostrarPedidos();
+            
+        }catch (SQLException ex){
+            JOptionPane.showMessageDialog(null, ex);
+        }
+        cc.desconectar();
+    }
+    
+    //Elimina los pedidos que se seleccionan por proveedor 2
+    public void eliminaColaPedidoProveedor2(String valor)
+    {
+        String sql = "DELETE FROM pedido WHERE proveedor2 LIKE '%"+valor+"%' ";
+        try{
+            PreparedStatement pst = (PreparedStatement) cn.prepareStatement(sql);
+            pst.executeUpdate();
+            mostrarPedidos();
+            
+        }catch (SQLException ex){
             JOptionPane.showMessageDialog(null, ex);
         }
         cc.desconectar();
@@ -595,7 +627,7 @@ public class HacerPedido extends javax.swing.JFrame {
         }
     }
     
-    public void generateJasperReport()
+    public void generateJasperReport() throws FileNotFoundException
     {
         String username = System.getProperty("user.name");
         
@@ -605,12 +637,26 @@ public class HacerPedido extends javax.swing.JFrame {
         //Obtenemos el path relativo del archivo .jasper de las carpetas del JAR
         File resPath = new File(getClass().getResource("/reports/report1.jasper").getFile());
         
+        String reportName = "report1";
+        
         String pathJasper = "Users/alejandro/NetBeansProjects/Abarrotera-Huerta/src/reports/report1.jasper";
         JasperReport jr = null;
         try {
+            
+            JasperCompileManager.compileReportToFile(resPath.toString());
+            
+            
             jr = (JasperReport) JRLoader.loadObjectFromFile(resPath.toString());
             JasperPrint jp = JasperFillManager.fillReport(jr, null, cc.conectar());
+//            JasperViewer.viewReport(jp, false);
+
+            JRPdfExporter exporter = new JRPdfExporter();
+            exporter.setParameter(JRExporterParameter.JASPER_PRINT, jp);
+            exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, new FileOutputStream(reportName + ".pdf"));
+            exporter.exportReport();
+
             JasperViewer jv = new JasperViewer(jp, false);
+//            JasperExportManager.exportReportToPdf(jp);
             jv.setVisible(true);
             jv.setTitle("Pedidos actuales");
             cc.desconectar();
@@ -622,9 +668,9 @@ public class HacerPedido extends javax.swing.JFrame {
     public void generateJasperReportParameter()
     {
         Map parametro = new HashMap();
-        parametro.put("proveedor1", jComboBoxProveedor1.getSelectedItem());
+        parametro.put("proveedor1", jComboBoxProveedor.getSelectedItem());
         
-        System.out.println("Parámetro: "+ jComboBoxProveedor1.getSelectedItem());
+        System.out.println("Parámetro: "+ jComboBoxProveedor.getSelectedItem());
         System.out.println("Contenido: "+parametro);
         
         //Obtenemos el path relativo del archivo .jasper de las carpetas del JAR
@@ -635,8 +681,13 @@ public class HacerPedido extends javax.swing.JFrame {
             jr = (JasperReport) JRLoader.loadObjectFromFile(resPath.toString());
             JasperPrint jp = JasperFillManager.fillReport(jr, parametro, cc.conectar());
             JasperViewer jv = new JasperViewer(jp, false);
+            JasperExportManager.exportReportToPdf(jp);
             jv.setVisible(true);
-            jv.setTitle("Pedidos con parámetro");
+            jv.setTitle("Pedidos por proveedor");
+            
+                eliminaColaPedidoProveedor1((String) jComboBoxProveedor.getSelectedItem());
+//                eliminaColaPedidoProveedor2((String) jComboBoxProveedor.getSelectedItem());
+            
             cc.desconectar();
         } catch (JRException ex) {
             Logger.getLogger(HacerPedido.class.getName()).log(Level.SEVERE, null, ex);
@@ -688,7 +739,7 @@ public class HacerPedido extends javax.swing.JFrame {
     
     public void setComboBoxProv1()
     {
-        jComboBoxProveedor1.removeAllItems();
+        jComboBoxProveedor.removeAllItems();
 
             String sql = "SELECT distinct proveedor1 FROM pedido";
 
@@ -697,7 +748,7 @@ public class HacerPedido extends javax.swing.JFrame {
                 st = cn.createStatement();
                 ResultSet rs = st.executeQuery(sql);
 
-                jComboBoxProveedor1.addItem("Elija proveedor");
+                jComboBoxProveedor.addItem("Elija proveedor");
                 //Validamos que el resultset contenga datos o esté vacío.
                 while (rs != null && rs.next()) 
                 { 
@@ -705,7 +756,7 @@ public class HacerPedido extends javax.swing.JFrame {
                     System.out.println("Se ha encontrado algo en la base de datos.");
                     //Regresa el puntero al inicio para no perder el primer dato de la tabla.
                     //rs.beforeFirst();
-                    jComboBoxProveedor1.addItem((String) rs.getObject(1));
+                    jComboBoxProveedor.addItem((String) rs.getObject(1));
                 }
 
             } catch (SQLException ex) {
@@ -716,7 +767,7 @@ public class HacerPedido extends javax.swing.JFrame {
     
     public void setComboBoxProv2()
     {
-        jComboBoxProveedor1.removeAllItems();
+        jComboBoxProveedor.removeAllItems();
 
             String sql = "SELECT distinct proveedor2 FROM pedido";
 
@@ -725,7 +776,7 @@ public class HacerPedido extends javax.swing.JFrame {
                 st = cn.createStatement();
                 ResultSet rs = st.executeQuery(sql);
 
-                jComboBoxProveedor1.addItem("Elija proveedor");
+                jComboBoxProveedor.addItem("Elija proveedor");
                 //Validamos que el resultset contenga datos o esté vacío.
                 while (rs != null && rs.next()) 
                 { 
@@ -733,7 +784,7 @@ public class HacerPedido extends javax.swing.JFrame {
                     System.out.println("Se ha encontrado algo en la base de datos.");
                     //Regresa el puntero al inicio para no perder el primer dato de la tabla.
                     //rs.beforeFirst();
-                    jComboBoxProveedor1.addItem((String) rs.getObject(1));
+                    jComboBoxProveedor.addItem((String) rs.getObject(1));
                 }
 
             } catch (SQLException ex) {
@@ -795,7 +846,7 @@ public class HacerPedido extends javax.swing.JFrame {
         btnPedidoRemove = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
-        jComboBoxProveedor1 = new javax.swing.JComboBox<>();
+        jComboBoxProveedor = new javax.swing.JComboBox<>();
         optProv1 = new javax.swing.JRadioButton();
         optProv2 = new javax.swing.JRadioButton();
         jPanel4 = new javax.swing.JPanel();
@@ -1054,7 +1105,7 @@ public class HacerPedido extends javax.swing.JFrame {
             }
         });
 
-        jComboBoxProveedor1.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
+        jComboBoxProveedor.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
 
         buttonGroup1.add(optProv1);
         optProv1.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
@@ -1086,7 +1137,7 @@ public class HacerPedido extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 252, Short.MAX_VALUE)
-                    .addComponent(jComboBoxProveedor1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(jComboBoxProveedor, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1096,7 +1147,7 @@ public class HacerPedido extends javax.swing.JFrame {
                     .addComponent(optProv1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jComboBoxProveedor1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jComboBoxProveedor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(optProv2))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -1276,8 +1327,12 @@ public class HacerPedido extends javax.swing.JFrame {
     }//GEN-LAST:event_btnNuevoPedidoActionPerformed
 
     private void btnGeneraPDFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGeneraPDFActionPerformed
-        // TODO add your handling code here:
-        generateJasperReport();
+        try {
+            // TODO add your handling code here:
+            generateJasperReport();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(HacerPedido.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btnGeneraPDFActionPerformed
 
     private void btnImprimePedidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImprimePedidoActionPerformed
@@ -1522,8 +1577,6 @@ class TS extends TransferHandler {
     private javax.swing.JPanel Panel_pedido;
     private javax.swing.JPanel Panel_productos;
     private javax.swing.JButton btnGeneraPDF;
-    private javax.swing.JButton btnGeneraPDF1;
-    private javax.swing.JButton btnGeneraPDF2;
     private javax.swing.JButton btnHome;
     private javax.swing.JButton btnImprimePedido;
     private javax.swing.JButton btnNuevoPedido;
@@ -1531,14 +1584,12 @@ class TS extends TransferHandler {
     private javax.swing.JButton btnPedidoRemove;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton jButton1;
-    private javax.swing.JComboBox<String> jComboBoxProveedor1;
+    private javax.swing.JComboBox<String> jComboBoxProveedor;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
-    private javax.swing.JPanel jPanel5;
-    private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
