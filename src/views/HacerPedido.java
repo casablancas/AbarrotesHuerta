@@ -637,28 +637,23 @@ public class HacerPedido extends javax.swing.JFrame {
         //Obtenemos el path relativo del archivo .jasper de las carpetas del JAR
         File resPath = new File(getClass().getResource("/reports/report1.jasper").getFile());
         
+        java.io.File file = new java.io.File("TestWindow.java");
+        String path = file.getAbsolutePath();
+        String only_path = path.substring(0,path.lastIndexOf('/'));
+        System.out.println(only_path);
+        
         String reportName = "report1";
         
         String pathJasper = "Users/alejandro/NetBeansProjects/Abarrotera-Huerta/src/reports/report1.jasper";
         JasperReport jr = null;
         try {
-            
-            JasperCompileManager.compileReportToFile(resPath.toString());
-            
-            
             jr = (JasperReport) JRLoader.loadObjectFromFile(resPath.toString());
             JasperPrint jp = JasperFillManager.fillReport(jr, null, cc.conectar());
-//            JasperViewer.viewReport(jp, false);
-
-            JRPdfExporter exporter = new JRPdfExporter();
-            exporter.setParameter(JRExporterParameter.JASPER_PRINT, jp);
-            exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, new FileOutputStream(reportName + ".pdf"));
-            exporter.exportReport();
-
             JasperViewer jv = new JasperViewer(jp, false);
-//            JasperExportManager.exportReportToPdf(jp);
+            JasperExportManager.exportReportToPdf(jp);
             jv.setVisible(true);
-            jv.setTitle("Pedidos actuales");
+            jv.setTitle("Pedidos por proveedor");
+            
             cc.desconectar();
         } catch (JRException ex) {
             Logger.getLogger(HacerPedido.class.getName()).log(Level.SEVERE, null, ex);

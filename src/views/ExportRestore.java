@@ -310,7 +310,7 @@ public class ExportRestore extends javax.swing.JFrame {
 
                          } catch (Exception e) {
                             e.printStackTrace();
-                            JOptionPane.showMessageDialog(null, "Algo salió mal, no se ha podido importar la base de datos.",
+                            JOptionPane.showMessageDialog(null, "Algo salió mal, no se ha podido importar la base de datos."+e.toString(),
                             "Importación errónea", JOptionPane.ERROR_MESSAGE);
                          }
                     }
