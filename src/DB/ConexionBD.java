@@ -10,21 +10,21 @@ import javax.swing.JOptionPane;
 public class ConexionBD {
 
 public  String puerto="3306";
-public  String nomservidor="localhost";
+//public  String nomservidor="localhost";
 //public  String nomservidor="sql5.freemysqlhosting.net";
-//public  String nomservidor="db4free.net";
+public  String nomservidor="db4free.net";
 //public  String db="servicioing";
 //public  String db="sql5108911";
 //public  String db="ssing";
 public String db="abarrotera";
-public  String user="root";
+//public  String user="root";
 //public  String user="sql5108911";
 //public  String user="ssing";
-//public  String user="oswaldo";
+public  String user="oswaldo";
 //public  String pass="shark123";
-public  String pass="";
+//public  String pass="";
 //public  String pass="shark123";
-//public String pass="oswaldohuerta";
+public String pass="oswaldohuerta";
 
 //Connection conn=null;
 
@@ -49,7 +49,7 @@ public Connection conectar(){
     //String BaseDeDatos = "jdbc:mysql://localhost/servicioing?user=root&password=";
     //String BaseDeDatos = "jdbc:mysql://sql5.freemysqlhosting.net/sql5108911?user=sql5108911&password=Rd3DwnStke";
     //+"?autoReconnect=true&useSSL=false "
-    String BaseDeDatos = "jdbc:mysql://"+nomservidor+"/"+db+"?user="+user+"&password="+pass;
+    String BaseDeDatos = "jdbc:mysql://"+nomservidor+"/"+db+"?user="+user+"&password="+pass+"&useSSL=false";
     Class.forName("com.mysql.jdbc.Driver");
     conn = DriverManager.getConnection(BaseDeDatos);
 //    setConexion(DriverManager.getConnection(BaseDeDatos));

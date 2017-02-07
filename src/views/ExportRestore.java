@@ -16,6 +16,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -197,6 +200,114 @@ public class ExportRestore extends javax.swing.JFrame {
     }
     
     
+    public boolean backupDataWithDatabase(String dumpExePath, String host, String user, String password, String database, String backupPath) {
+        boolean status = false;
+        try {
+            Process p = null;
+ 
+            DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+            Date date = new Date();
+            String filepath = "backup(with_DB)-" + database + "-" + host + "-(" + dateFormat.format(date) + ").sql";
+ 
+            String batchCommand = "";
+            if (password != "") {
+                //Backup with database
+                batchCommand = dumpExePath + " -h " + host + " -u " + user + " --password=" + password + " --add-drop-database -B " + database + " -r \"" + backupPath + "" + filepath + "\"";
+            } else {
+                batchCommand = dumpExePath + " -h " + host + " -u " + user + " --add-drop-database -B " + database + " -r \"" + backupPath + "" + filepath + "\"";
+            }
+ 
+            Runtime runtime = Runtime.getRuntime();
+            p = runtime.exec(batchCommand);
+            int processComplete = p.waitFor();
+ 
+            if (processComplete == 0) {
+                status = true;
+                System.out.println("Backup created successfully for with DB " + database + " in " + host + ":");
+//                log.info(");
+            } else {
+                status = false;
+                System.out.println("Could not create the backup for with DB " + database + " in " + host + ":");
+//                log.info("Could not create the backup for with DB " + database + " in " + host + ":" + port);
+            }
+ 
+        } catch (IOException ioe) {
+//            log.error(ioe, ioe.getCause());
+        } catch (Exception e) {
+//            log.error(e, e.getCause());
+        }
+        return status;
+    }
+    
+    
+    
+    //Example
+    public void restoreExample(){
+        
+        String path = "C:/Users/Alex/Desktop/saludos.sql";
+    
+//        String executeCmd = "C:/xampp/mysql/bin/mysqldump -uroot -p -B abarrotera -r " + path;
+        String executeCmd = "C:/xampp/mysql/bin/mysql -uroot -p abarrotera <" + path;
+ 
+    System.out.println(executeCmd);
+ 
+    Process runtimeProcess;
+ 
+    try
+    {
+       runtimeProcess = Runtime.getRuntime().exec(new String[] { "cmd.exe", "/c", executeCmd });
+ 
+       int processComplete = runtimeProcess.waitFor();
+ 
+       System.out.println(processComplete);
+ 
+       if(processComplete == 0)
+       {
+          System.out.println("Backup Created Successfully !");
+       }
+       else
+       {
+          System.out.println("Couldn't Create the backup !");
+       }
+    }
+    catch(Exception ex)
+    {
+       ex.printStackTrace();
+    }
+    }
+    
+    //Método para probar en Windows
+    public void backupDB(){
+        JFileChooser jFileChooser = new JFileChooser();
+        jFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        
+        String path;
+        
+        int se = jFileChooser.showSaveDialog(null);
+        if (se == JFileChooser.APPROVE_OPTION){
+        } else {
+            path = jFileChooser.getSelectedFile().getPath();
+            
+            String nombre = "\\backup.sql";
+            String backup = "";
+            String pass = "";
+        
+            if (path.trim().length() != 0){
+                try{
+                    backup = "C:\\xampp\\mysql\\bin\\mysqldump --opt -uroot -p"+pass+" -B test -r "+"C:\\Users\\Alex\\Desktop"+nombre;
+                    Runtime runtime = Runtime.getRuntime();
+                    runtime.exec(backup);
+                    JOptionPane.showMessageDialog(null, "Exportado correctamente!!");
+                }catch(Exception ex){
+                    JOptionPane.showMessageDialog(null, ex.getMessage());
+                }
+            }
+        }
+        
+        
+    }
+    
+    
     private void exportDB() {
         
         String nombre="";
@@ -212,12 +323,21 @@ public class ExportRestore extends javax.swing.JFrame {
 //        System.out.println("1: "+pathArchivo+" "+nombreArchivo);
         Process p = null;
         
-        String host = "";
-        String user = "root";
-        String pass = "";
+        //Datos locales
+        //String host = "";
+        //String user = "root";
+        //String pass = "";
+        //String db = "abarrotera";
+        
+        //Datos remotos
+        String host = "db4free.net";
+        String user = "oswaldo";
+        String pass = "oswaldohuerta";
         String db = "abarrotera";
         
-        String executeCmd = "/Applications/XAMPP/xamppfiles/bin/mysqldump -u" + user +  " --add-drop-database -B " + db + " -r " + pathArchivo.replace(" ", "")+".sql";
+        //String executeCmd = "/Applications/XAMPP/xamppfiles/bin/mysqldump -u" + user +  " --add-drop-database -B " + db + " -r " + pathArchivo.replace(" ", "")+".sql";
+//        String executeCmd = "C:\\xampp\\mysql\\bin\\mysqldump -h" +host+ "-u" + user + "-p" + pass +  " --database " + db + " -r " + pathArchivo.replace(" ", "")+".sql";
+        String executeCmd = "C:\\xampp\\mysql\\bin\\mysqldump -h" +host+ "-u" + user + "-p" + pass +  " --database " + db + " > " + pathArchivo.replace(" ", "")+".sql";
         
         try {
             Runtime runtime = Runtime.getRuntime();
@@ -245,7 +365,8 @@ public class ExportRestore extends javax.swing.JFrame {
             
             
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error at Backuprestore" + e.getMessage());
         }
     }
     
@@ -279,9 +400,12 @@ public class ExportRestore extends javax.swing.JFrame {
                                   .getRuntime()
                                     //Importación de BD desde mysql remoto en db4free
 //                                    .exec("/Applications/XAMPP/xamppfiles/bin/mysql -h db4free.net -u oswaldo -poswaldohuerta abarrotera");
-                                    .exec("/Applications/XAMPP/xamppfiles/bin/mysql -h localhost -u root");
+//                                    .exec("/Applications/XAMPP/xamppfiles/bin/mysql -h localhost -u root");
+                                      .exec("mysql -uroot -p "+"abarrotera < "+pathArchivo);
+
 
                                   //.exec("C:/Aplicaciones/wamp/bin/mysql/mysql5.1.36/bin/mysql -u root -ppassword database");
+                                  //C:\xampp\mysql\bin
 
                             String username = System.getProperty("user.name");
 
@@ -471,12 +595,15 @@ public class ExportRestore extends javax.swing.JFrame {
 
     private void btnExport2btnExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExport2btnExportActionPerformed
         // TODO add your handling code here:
-        exportDB();
+        //exportDB();
+//        backupDB();
+        backupDataWithDatabase("C:\\xampp\\mysql\\bin\\mysqldump", "db4free.net", "oswaldo", "oswaldohuerta", "abarrotera", "C:/Users/Alex/Desktop/saludosss.sql");
     }//GEN-LAST:event_btnExport2btnExportActionPerformed
 
     private void btnImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImportActionPerformed
         // TODO add your handling code here:
-        importDB();
+        //importDB();
+        restoreExample();
     }//GEN-LAST:event_btnImportActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing

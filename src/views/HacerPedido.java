@@ -636,18 +636,23 @@ public class HacerPedido extends javax.swing.JFrame {
         
         //Obtenemos el path relativo del archivo .jasper de las carpetas del JAR
         File resPath = new File(getClass().getResource("/reports/report1.jasper").getFile());
+        InputStream path2 = getClass().getResourceAsStream("/reports/report1.jasper");
+       
         
         java.io.File file = new java.io.File("TestWindow.java");
         String path = file.getAbsolutePath();
         String only_path = path.substring(0,path.lastIndexOf('/'));
-        System.out.println(only_path);
+        System.out.println("PATH: "+resPath.toString());
         
         String reportName = "report1";
         
-        String pathJasper = "Users/alejandro/NetBeansProjects/Abarrotera-Huerta/src/reports/report1.jasper";
+        //path absoluto para acceder al .jasper en la PC
+        //String pathJasper = "/Users/alejandro/NetBeansProjects/Abarrotera-Huerta/src/reports/report1.jasper";
+        String pathJasper = "/Users/alejandro/NetBeansProjects/Abarrotera-Huerta/build/classes/reports/report1.jasper";
+        
         JasperReport jr = null;
         try {
-            jr = (JasperReport) JRLoader.loadObjectFromFile(resPath.toString());
+            jr = (JasperReport) JRLoader.loadObjectFromLocation(pathJasper);
             JasperPrint jp = JasperFillManager.fillReport(jr, null, cc.conectar());
             JasperViewer jv = new JasperViewer(jp, false);
             JasperExportManager.exportReportToPdf(jp);
@@ -673,7 +678,7 @@ public class HacerPedido extends javax.swing.JFrame {
         
         JasperReport jr = null;
         try {
-            jr = (JasperReport) JRLoader.loadObjectFromFile(resPath.toString());
+            jr = (JasperReport) JRLoader.loadObjectFromLocation(resPath.toString());
             JasperPrint jp = JasperFillManager.fillReport(jr, parametro, cc.conectar());
             JasperViewer jv = new JasperViewer(jp, false);
             JasperExportManager.exportReportToPdf(jp);
@@ -1322,12 +1327,12 @@ public class HacerPedido extends javax.swing.JFrame {
     }//GEN-LAST:event_btnNuevoPedidoActionPerformed
 
     private void btnGeneraPDFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGeneraPDFActionPerformed
-        try {
-            // TODO add your handling code here:
-            generateJasperReport();
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(HacerPedido.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        //try {
+          //  generateJasperReport();
+        //} catch (FileNotFoundException ex) {
+          //  Logger.getLogger(HacerPedido.class.getName()).log(Level.SEVERE, null, ex);
+        //}
+        printPedido();
     }//GEN-LAST:event_btnGeneraPDFActionPerformed
 
     private void btnImprimePedidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImprimePedidoActionPerformed

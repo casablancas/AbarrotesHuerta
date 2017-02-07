@@ -60,10 +60,6 @@
 					</textElement>
 					<text><![CDATA[Lista de pedidos]]></text>
 				</staticText>
-				<image scaleImage="FillFrame">
-					<reportElement x="511" y="20" width="64" height="64" uuid="5362cf5c-9653-4c7b-ac9a-8e8e70ed9b89"/>
-					<imageExpression><![CDATA["/Users/alejandro/NetBeansProjects/Abarrotera-Huerta/src/icons/home/store (2).png"]]></imageExpression>
-				</image>
 			</frame>
 		</band>
 	</title>
