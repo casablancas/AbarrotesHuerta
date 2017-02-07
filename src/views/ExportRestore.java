@@ -6,6 +6,7 @@
 package views;
 
 import com.lowagie.text.pdf.PdfName;
+import java.awt.HeadlessException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,9 +17,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.net.URISyntaxException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -199,7 +203,7 @@ public class ExportRestore extends javax.swing.JFrame {
         return texto;//El texto se almacena en el JTextArea
     }
     
-    
+    //Este es el metodo bueno
     public boolean backupDataWithDatabase(String dumpExePath, String host, String user, String password, String database, String backupPath) {
         boolean status = false;
         try {
@@ -244,10 +248,10 @@ public class ExportRestore extends javax.swing.JFrame {
     //Example
     public void restoreExample(){
         
-        String path = "C:/Users/Alex/Desktop/saludos.sql";
+        String path = "C:/Users/Alex/Desktop/holi.sql";
     
 //        String executeCmd = "C:/xampp/mysql/bin/mysqldump -uroot -p -B abarrotera -r " + path;
-        String executeCmd = "C:/xampp/mysql/bin/mysql -uroot -p abarrotera <" + path;
+        String executeCmd = "C:/xampp/mysql/bin/mysql -hlocalhost -uroot -p < " + path;
  
     System.out.println(executeCmd);
  
@@ -401,7 +405,7 @@ public class ExportRestore extends javax.swing.JFrame {
                                     //Importación de BD desde mysql remoto en db4free
 //                                    .exec("/Applications/XAMPP/xamppfiles/bin/mysql -h db4free.net -u oswaldo -poswaldohuerta abarrotera");
 //                                    .exec("/Applications/XAMPP/xamppfiles/bin/mysql -h localhost -u root");
-                                      .exec("mysql -uroot -p "+"abarrotera < "+pathArchivo);
+                                      .exec("mysql -u root -p "+pathArchivo);
 
 
                                   //.exec("C:/Aplicaciones/wamp/bin/mysql/mysql5.1.36/bin/mysql -u root -ppassword database");
@@ -439,6 +443,28 @@ public class ExportRestore extends javax.swing.JFrame {
                          }
                     }
     }
+    
+    
+    public boolean restoreDatabase() throws Exception {
+        
+    String filepath = "C:\\Users\\Alex\\Desktop\\holi.sql";
+    String db = "";
+    String host = "localhost";
+    String port = "";
+    String user = "root";
+    String password = "";
+            
+    String comando = "mysql " + db + " --host=" + host
+            + " --user=" + user + " --password=" + password
+            + " < " + filepath;
+    File f = new File("restore.bat");
+    FileOutputStream fos = new FileOutputStream(f);
+    fos.write(comando.getBytes());
+    fos.close();
+    Process run = Runtime.getRuntime().exec("cmd /C start restore.bat ");
+    return true;
+
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -597,13 +623,19 @@ public class ExportRestore extends javax.swing.JFrame {
         // TODO add your handling code here:
         //exportDB();
 //        backupDB();
-        backupDataWithDatabase("C:\\xampp\\mysql\\bin\\mysqldump", "db4free.net", "oswaldo", "oswaldohuerta", "abarrotera", "C:/Users/Alex/Desktop/saludosss.sql");
+//        backupDataWithDatabase("C:\\xampp\\mysql\\bin\\mysqldump", "db4free.net", "oswaldo", "oswaldohuerta", "abarrotera", "C:/Users/Alex/Desktop/jiji.sql");
+          backupDataWithDatabase("C:\\xampp\\mysql\\bin\\mysqldump", "localhost", "root", "", "abarrotera", "C:/Users/Alex/Desktop/jiji.sql");
     }//GEN-LAST:event_btnExport2btnExportActionPerformed
 
     private void btnImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImportActionPerformed
-        // TODO add your handling code here:
-        //importDB();
-        restoreExample();
+        try {
+            // TODO add your handling code here:
+            //importDB();
+//        restoreExample();
+            restoreDatabase();
+        } catch (Exception ex) {
+            Logger.getLogger(ExportRestore.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btnImportActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing

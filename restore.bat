@@ -1,0 +1,1 @@
+mysql  --host=localhost --user=root --password= < C:\Users\Alex\Desktop\holi.sql
